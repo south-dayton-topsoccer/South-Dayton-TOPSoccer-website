@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.15
+/* South Dayton TOPSoccer — renderer · Version: 1.16
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -152,7 +152,7 @@
     // ball mark. A custom logo usually contains the name, so hide the text.
     var brandLogo = $('brand-logo'), brandName = $('brand-name');
     var logoH = parseInt(c.logo_height, 10);
-    if (!logoH || logoH < 16 || logoH > 200) logoH = c.logo_url ? 48 : 30;
+    if (!logoH || logoH < 16 || logoH > 400) logoH = c.logo_url ? 48 : 30;
     if (brandLogo) {
       if (c.logo_url) {
         brandLogo.src = imgUrl(c.logo_url);
