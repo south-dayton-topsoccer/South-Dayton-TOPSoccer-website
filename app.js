@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.10
+/* South Dayton TOPSoccer — renderer · Version: 1.11
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -33,12 +33,14 @@
   // separately since the cell has no year). Returns null if unparseable.
   var SCHED_MON = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
   function schedDate_(str, year) {
-    var m = String(str || '').toLowerCase()
+    var s = String(str || '');
+    var m = s.toLowerCase()
       .match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})/);
     if (!m) return null;
     var mon = SCHED_MON[m[1].slice(0, 3)];
     if (mon == null) return null;
-    return new Date(year, mon, parseInt(m[2], 10));
+    var ym = s.match(/\b(20\d\d)\b/);              // use a year in the cell if present
+    return new Date(ym ? +ym[1] : year, mon, parseInt(m[2], 10));
   }
 
   // Make an <img>-friendly URL. Converts a Google Drive share link or file ID
@@ -180,7 +182,11 @@
     }
 
     // Schedule — chronological list; past dates dimmed automatically.
-    var year = parseInt(c.season_year, 10) || new Date().getFullYear();
+    // Year-proof: use season_year if set, else assume the current year — but
+    // once the season is over (Nov/Dec), roll to next year so the upcoming
+    // Aug–Oct dates read as future instead of all showing as past.
+    var year = parseInt(c.season_year, 10);
+    if (!year) { var n = new Date(); year = n.getFullYear() + (n.getMonth() >= 10 ? 1 : 0); }
     var today = new Date(); today.setHours(0, 0, 0, 0);
     var sched = (data.schedule || []).map(function (r) {
       return { r: r, d: schedDate_(r.Date, year) };
