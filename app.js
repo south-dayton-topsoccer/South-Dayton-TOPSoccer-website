@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.9
+/* South Dayton TOPSoccer — renderer · Version: 1.10
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -130,6 +130,21 @@
     // Brand + hero
     setText('brand-name', c.org_name);
     setText('tagline', c.tagline);
+
+    // Logo: use a custom logo image from the sheet if set, else the built-in
+    // ball mark. A custom logo usually contains the name, so hide the text.
+    var brandLogo = $('brand-logo'), brandName = $('brand-name');
+    var logoH = parseInt(c.logo_height, 10);
+    if (!logoH || logoH < 16 || logoH > 200) logoH = c.logo_url ? 48 : 30;
+    if (brandLogo) {
+      if (c.logo_url) {
+        brandLogo.src = imgUrl(c.logo_url);
+        if (brandName) brandName.hidden = true;
+      } else if (brandName) {
+        brandName.hidden = false;
+      }
+      brandLogo.style.height = logoH + 'px';
+    }
     setHTML('hero-headline', emphasize(c.hero_headline));
     setText('hero-subtext', c.hero_subtext);
     setText('footer-org', c.org_name);

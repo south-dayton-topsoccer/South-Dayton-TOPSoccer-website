@@ -1,6 +1,6 @@
 /* =============================================================
    South Dayton TOPSoccer — site configuration
-   Version: 1.4
+   Version: 1.5
    -------------------------------------------------------------
    This is the ONLY file you edit on the site itself, and you
    really only touch ONE line: SHEET_ID.
@@ -44,6 +44,8 @@ window.SDTS_CONFIG = {
     config: {
       org_name: 'South Dayton TOPSoccer',
       tagline: 'The Outreach Program for Soccer',
+      logo_url: '',        // optional logo image (Drive link or URL); blank = built-in ball mark
+      logo_height: '',     // optional nav logo height in px (e.g. 48); blank = sensible default
       hero_headline: 'Soccer for *every* child and young adult.',
       hero_subtext: 'An all-volunteer program for kids and adults with disabilities — built around fun and participation, not winning.',
       hotline_phone: '(937) 815-1548',
