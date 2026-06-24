@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.11
+/* South Dayton TOPSoccer — renderer · Version: 1.13
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -69,6 +69,12 @@
         var key = cols[i] || ('col' + i);
         obj[key] = cell ? (cell.f != null ? cell.f : cell.v) : '';
         if (obj[key] == null) obj[key] = '';
+        // If the cell is a real date, keep its true value (year included) so
+        // we never have to guess the year. gviz raw looks like "Date(2026,7,16)".
+        if (cell && cell.v != null) {
+          var dm = String(cell.v).match(/^Date\((\d+),(\d+),(\d+)/);
+          if (dm) obj[key + '__d'] = new Date(+dm[1], +dm[2], +dm[3]).getTime();
+        }
       });
       return obj;
     });
@@ -189,7 +195,10 @@
     if (!year) { var n = new Date(); year = n.getFullYear() + (n.getMonth() >= 10 ? 1 : 0); }
     var today = new Date(); today.setHours(0, 0, 0, 0);
     var sched = (data.schedule || []).map(function (r) {
-      return { r: r, d: schedDate_(r.Date, year) };
+      // Prefer the cell's real date value (year and all); fall back to parsing
+      // the text + the year-proofed season year only if it's not a real date.
+      var d = (typeof r['Date__d'] === 'number') ? new Date(r['Date__d']) : schedDate_(r.Date, year);
+      return { r: r, d: d };
     }).sort(function (a, b) { return (a.d ? a.d.getTime() : 0) - (b.d ? b.d.getTime() : 0); });
 
     // "Subscribe to the schedule" calendar button (webcal feed from config)
@@ -210,14 +219,23 @@
       }
     }
 
+    // Editable schedule heading (blank = keep the built-in one)
+    if (c.schedule_heading && $('schedule-heading')) {
+      $('schedule-heading').innerHTML = emphasize(c.schedule_heading);
+    }
+
     var listEl = $('schedule-list');
     if (listEl) listEl.className = 'sched';     // switch from card grid to list
     setHTML('schedule-list', sched.map(function (x) {
       var r = x.r;
       var past = x.d && x.d < today;
       var loc = [r.Location, r.Notes].filter(Boolean).join(' · ');
+      // Weekday is always computed from the real date — a typed/wrong day can't show.
+      var dateLabel = x.d
+        ? x.d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+        : (r.Date || '');
       return '<div class="srow' + (past ? ' past' : '') + '">' +
-        '<div class="sdate">' + esc(r.Date) + '</div>' +
+        '<div class="sdate">' + esc(dateLabel) + '</div>' +
         '<div class="sev">' + esc(r.Event) + '</div>' +
         '<div class="stime">' + esc(r.Time || '') + '</div>' +
         '<div class="sloc">' + esc(loc) + '</div>' +

@@ -1,6 +1,6 @@
 /* =============================================================
    South Dayton TOPSoccer — site configuration
-   Version: 1.5
+   Version: 1.6
    -------------------------------------------------------------
    This is the ONLY file you edit on the site itself, and you
    really only touch ONE line: SHEET_ID.
@@ -58,6 +58,7 @@ window.SDTS_CONFIG = {
       donate_url: '',
       facebook_url: '',
       instagram_url: '',
+      schedule_heading: '',   // optional schedule section heading; blank = "This season's schedule"
       season_info: 'Our season runs August through October. All practices and games are played Wednesday evenings and Sunday afternoons at Oak Grove Park in Centerville.',
       about_text: 'TOPSoccer is a national US Youth Soccer program for children and young adults with disabilities. Any child or young adult ages 5 and up who is not able to compete effectively in a local recreational league — for any reason — is welcome to play. Coaches provide equal opportunity for all children, regardless of ability. While we are based in the Centerville/Washington Township area, children from all areas are invited to play.',
       location_name: 'Oak Grove Park',
