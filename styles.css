@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — styles · Version: 3.5
+/* South Dayton TOPSoccer — styles · Version: 3.6
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
 
@@ -17,7 +17,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 60px; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
   font-family: var(--font); line-height: 1.5; font-size: 17px;
@@ -38,7 +38,7 @@ a:hover { text-decoration: underline; }
 /* Alert banner */
 .alert-banner {
   background: #bf4800; color: #fff; text-align: center;
-  padding: 11px 16px; font-weight: 500; font-size: .95rem;
+  padding: 16px 20px; font-weight: 500; font-size: 1.02rem; line-height: 1.4;
 }
 .alert-banner .alert-icon { margin-right: 6px; }
 
@@ -46,8 +46,8 @@ a:hover { text-decoration: underline; }
 .nav {
   position: sticky; top: 0; z-index: 20;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding: 0 22px; height: 52px;
-  background: rgba(255,255,255,.8); backdrop-filter: saturate(180%) blur(20px);
+  padding: 10px 22px; min-height: 56px;
+  background: rgba(255,255,255,.92); backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid rgba(0,0,0,.08);
 }
 .brand { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 1.05rem; color: var(--ink); }
