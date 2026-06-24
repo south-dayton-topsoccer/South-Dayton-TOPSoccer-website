@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.14
+/* South Dayton TOPSoccer — renderer · Version: 1.15
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -20,6 +20,15 @@
   // Turn *word* into an italic emphasis span (for headlines). Escapes first.
   function emphasize(s) {
     return esc(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  }
+  // Turn a markdown link [text](https://…) into a real link; a whole-cell URL
+  // also becomes a link. Escapes first, so it's safe. Used for Location/Notes.
+  function linkify(s) {
+    s = esc(String(s == null ? '' : s)).trim();
+    if (!s) return '';
+    if (/^https?:\/\/\S+$/.test(s)) return '<a href="' + s + '" target="_blank" rel="noopener">' + s + '</a>';
+    return s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener">$1</a>');
   }
   // Normalize a link the way a volunteer might type it: add https:// if the
   // scheme is missing, so "recipes.deanheyne.org" becomes a real external link.
@@ -229,7 +238,7 @@
     setHTML('schedule-list', sched.map(function (x) {
       var r = x.r;
       var past = x.d && x.d < today;
-      var loc = [r.Location, r.Notes].filter(Boolean).join(' · ');
+      var loc = [r.Location, r.Notes].filter(Boolean).map(linkify).join(' · ');
       // Weekday is always computed from the real date — a typed/wrong day can't show.
       var dateLabel = x.d
         ? x.d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
@@ -238,7 +247,7 @@
         '<div class="sdate">' + esc(dateLabel) + '</div>' +
         '<div class="sev">' + esc(r.Event) + '</div>' +
         '<div class="stime">' + esc(r.Time || '') + '</div>' +
-        '<div class="sloc">' + esc(loc) + '</div>' +
+        '<div class="sloc">' + loc + '</div>' +
       '</div>';
     }).join(''));
 
