@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.4
+/* South Dayton TOPSoccer — renderer · Version: 1.6
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -21,6 +21,14 @@
   function emphasize(s) {
     return esc(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
   }
+  // Normalize a link the way a volunteer might type it: add https:// if the
+  // scheme is missing, so "recipes.deanheyne.org" becomes a real external link.
+  function extUrl(u) {
+    u = String(u == null ? '' : u).trim();
+    if (!u) return '';
+    return /^(https?:|mailto:|tel:)/i.test(u) ? u : 'https://' + u;
+  }
+
   // Parse a schedule "Date" cell like "Sun, Aug 16" into a Date (year supplied
   // separately since the cell has no year). Returns null if unparseable.
   var SCHED_MON = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
@@ -34,14 +42,19 @@
   }
 
   // Make an <img>-friendly URL. Converts a Google Drive share link or file ID
-  // into a direct image URL; passes any other direct image URL through.
+  // into a direct image URL. Returns '' for things that can't be embedded
+  // (blank, helper text with spaces, or Google Photos album links) so the
+  // gallery silently skips them instead of showing a broken tile.
   function imgUrl(u) {
     u = String(u == null ? '' : u).trim();
-    if (!u) return '';
+    if (!u || /\s/.test(u)) return '';                       // blank or prose (e.g. a tip)
+    if (/photos\.app\.goo\.gl|photos\.google\.com/i.test(u)) return ''; // album link ≠ image
     var m = u.match(/\/d\/([A-Za-z0-9_-]{20,})/) || u.match(/[?&]id=([A-Za-z0-9_-]{20,})/);
     if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
     if (/^[A-Za-z0-9_-]{25,}$/.test(u)) return 'https://drive.google.com/thumbnail?id=' + u + '&sz=w1200';
-    return u;
+    if (/^https?:\/\//i.test(u)) return u;                   // direct image URL
+    if (u.indexOf('.') !== -1) return 'https://' + u;        // bare domain/path
+    return '';
   }
 
   // Parse a Google Sheets gviz response into an array of row objects keyed by header label.
@@ -134,10 +147,10 @@
     }).join(''));
 
     // Get involved links
-    var regUrl = c.registration_url || '#register';
+    var regUrl = c.registration_url ? extUrl(c.registration_url) : '#register';
     if ($('involve-register')) $('involve-register').setAttribute('href', regUrl);
-    if (c.volunteer_url && $('involve-volunteer')) $('involve-volunteer').setAttribute('href', c.volunteer_url);
-    if (c.donate_url && $('involve-donate')) $('involve-donate').setAttribute('href', c.donate_url);
+    if (c.volunteer_url && $('involve-volunteer')) $('involve-volunteer').setAttribute('href', extUrl(c.volunteer_url));
+    if (c.donate_url && $('involve-donate')) $('involve-donate').setAttribute('href', extUrl(c.donate_url));
 
     // Registration section
     setText('registration-window', c.registration_window);
@@ -174,7 +187,7 @@
     setText('location-name', c.location_name);
     if (c.location_address) { setText('location-address', c.location_address); }
     else { var law = $('location-address-wrap'); if (law) law.hidden = true; }
-    if (c.location_maps_url && $('location-maps')) $('location-maps').setAttribute('href', c.location_maps_url);
+    if (c.location_maps_url && $('location-maps')) $('location-maps').setAttribute('href', extUrl(c.location_maps_url));
 
     // FAQs
     var faqs = data.faqs || [];
@@ -188,7 +201,7 @@
     setHTML('sponsor-list', sponsors.map(function (s) {
       var name = esc(s.Name || s.name);
       var inner = (s.URL || s.url)
-        ? '<a href="' + esc(s.URL || s.url) + '" target="_blank" rel="noopener">' + name + '</a>'
+        ? '<a href="' + esc(extUrl(s.URL || s.url)) + '" target="_blank" rel="noopener">' + name + '</a>'
         : name;
       var lvl = (s.Level || s.level) ? '<span class="level">' + esc(s.Level || s.level) + '</span>' : '';
       return '<div class="sponsor">' + inner + lvl + '</div>';
@@ -208,7 +221,7 @@
     // Full-album link (optional)
     var pl = $('photos-link');
     if (pl) {
-      if (c.photos_url) { pl.setAttribute('href', c.photos_url); pl.hidden = false; }
+      if (c.photos_url) { pl.setAttribute('href', extUrl(c.photos_url)); pl.hidden = false; }
       else { pl.hidden = true; }
     }
 
