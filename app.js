@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.2
+/* South Dayton TOPSoccer — renderer · Version: 1.3
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -49,7 +49,7 @@
 
   function fetchTab(tab) {
     var url = 'https://docs.google.com/spreadsheets/d/' + CFG.SHEET_ID +
-              '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(tab);
+              '/gviz/tq?tqx=out:json&headers=1&sheet=' + encodeURIComponent(tab);
     return fetch(url).then(function (res) { return res.text(); }).then(parseGviz);
   }
 
@@ -77,9 +77,12 @@
       fetchTab(TABS.contacts).catch(function () { return S.contacts; }),
       fetchTab(TABS.photos).catch(function () { return S.photos; })
     ]).then(function (a) {
-      return { config: a[0] || S.config, stats: a[1] || S.stats, schedule: a[2] || S.schedule,
-               faqs: a[3] || S.faqs, sponsors: a[4] || S.sponsors, contacts: a[5] || S.contacts,
-               photos: a[6] || S.photos };
+      var cfg = (a[0] && a[0].org_name) ? a[0] : S.config;   // empty/blocked sheet -> sample
+      var nz = function (arr, fb) { return (arr && arr.length) ? arr : fb; };
+      return { config: cfg,
+               stats: nz(a[1], S.stats), schedule: nz(a[2], S.schedule),
+               faqs: nz(a[3], S.faqs), sponsors: nz(a[4], S.sponsors),
+               contacts: nz(a[5], S.contacts), photos: nz(a[6], S.photos) };
     }).catch(function () { return S; });
   }
 
