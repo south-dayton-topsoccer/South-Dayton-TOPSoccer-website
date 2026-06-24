@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — styles · Version: 3.2
+/* South Dayton TOPSoccer — styles · Version: 3.4
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
 
@@ -108,18 +108,19 @@ a:hover { text-decoration: underline; }
 .card .ev { font-size: 1.05rem; margin: 4px 0; }
 .card .meta { color: var(--muted); font-size: .95rem; }
 
-/* Schedule — chronological list (past dates dimmed) */
-.sched { max-width: 760px; margin: 36px auto 0; text-align: left; }
-.srow { display: flex; gap: 20px; padding: 15px 4px; border-bottom: 1px solid var(--line); }
+/* Schedule — compact one-line-per-row table (past dates dimmed) */
+.sched { max-width: 880px; margin: 32px auto 0; text-align: left; }
+.srow { display: grid; grid-template-columns: 108px 1.1fr 140px 1.4fr; gap: 16px;
+        align-items: baseline; padding: 11px 4px; border-bottom: 1px solid var(--line); }
 .srow:first-child { border-top: 1px solid var(--line); }
-.srow .sdate { flex: 0 0 120px; font-weight: 600; }
-.srow .sbody { flex: 1; min-width: 0; }
+.srow .sdate { font-weight: 600; white-space: nowrap; }
 .srow .sev { font-weight: 500; }
-.srow .smeta { color: var(--muted); font-size: .95rem; margin-top: 3px; }
+.srow .stime { color: var(--muted); white-space: nowrap; }
+.srow .sloc { color: var(--muted); font-size: .95rem; }
 .srow.past { opacity: .42; }
-@media (max-width: 560px) {
-  .srow { flex-direction: column; gap: 2px; }
-  .srow .sdate { flex: none; }
+@media (max-width: 640px) {
+  .srow { grid-template-columns: 1fr; gap: 1px; padding: 12px 4px; }
+  .srow .stime, .srow .sloc { font-size: .92rem; }
 }
 
 /* FAQs */
@@ -144,9 +145,11 @@ a:hover { text-decoration: underline; }
 .contact-card .role { color: var(--muted); font-size: .95rem; }
 
 /* Photo gallery */
-.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 36px auto 28px; max-width: var(--maxw); }
+/* auto-fill (not auto-fit) so a single photo stays a normal tile instead of
+   stretching to fill the whole row. All tiles are a uniform height. */
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 36px auto 28px; max-width: var(--maxw); justify-content: center; }
 .gallery .shot { margin: 0; border-radius: var(--radius); overflow: hidden; background: var(--bg-alt); }
-.gallery .shot img { width: 100%; height: 220px; object-fit: cover; display: block; }
+.gallery .shot img { width: 100%; height: 200px; object-fit: cover; display: block; }
 .gallery .shot figcaption { font-size: .9rem; color: var(--muted); padding: 10px 14px; text-align: left; }
 
 /* Footer */

@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.6
+/* South Dayton TOPSoccer — renderer · Version: 1.7
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -176,11 +176,13 @@
     setHTML('schedule-list', sched.map(function (x) {
       var r = x.r;
       var past = x.d && x.d < today;
-      var meta = [r.Time, r.Location, r.Notes].filter(Boolean).join(' · ');
+      var loc = [r.Location, r.Notes].filter(Boolean).join(' · ');
       return '<div class="srow' + (past ? ' past' : '') + '">' +
         '<div class="sdate">' + esc(r.Date) + '</div>' +
-        '<div class="sbody"><div class="sev">' + esc(r.Event) + '</div>' +
-        (meta ? '<div class="smeta">' + esc(meta) + '</div>' : '') + '</div></div>';
+        '<div class="sev">' + esc(r.Event) + '</div>' +
+        '<div class="stime">' + esc(r.Time || '') + '</div>' +
+        '<div class="sloc">' + esc(loc) + '</div>' +
+      '</div>';
     }).join(''));
 
     // Location
