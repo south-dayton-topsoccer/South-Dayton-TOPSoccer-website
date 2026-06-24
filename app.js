@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.3
+/* South Dayton TOPSoccer — renderer · Version: 1.4
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -21,6 +21,18 @@
   function emphasize(s) {
     return esc(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
   }
+  // Parse a schedule "Date" cell like "Sun, Aug 16" into a Date (year supplied
+  // separately since the cell has no year). Returns null if unparseable.
+  var SCHED_MON = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
+  function schedDate_(str, year) {
+    var m = String(str || '').toLowerCase()
+      .match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})/);
+    if (!m) return null;
+    var mon = SCHED_MON[m[1].slice(0, 3)];
+    if (mon == null) return null;
+    return new Date(year, mon, parseInt(m[2], 10));
+  }
+
   // Make an <img>-friendly URL. Converts a Google Drive share link or file ID
   // into a direct image URL; passes any other direct image URL through.
   function imgUrl(u) {
@@ -139,13 +151,23 @@
       if (rc) rc.hidden = false;
     }
 
-    // Schedule
-    var sched = data.schedule || [];
-    setHTML('schedule-list', sched.map(function (r) {
+    // Schedule — chronological list; past dates dimmed automatically.
+    var year = parseInt(c.season_year, 10) || new Date().getFullYear();
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var sched = (data.schedule || []).map(function (r) {
+      return { r: r, d: schedDate_(r.Date, year) };
+    }).sort(function (a, b) { return (a.d ? a.d.getTime() : 0) - (b.d ? b.d.getTime() : 0); });
+
+    var listEl = $('schedule-list');
+    if (listEl) listEl.className = 'sched';     // switch from card grid to list
+    setHTML('schedule-list', sched.map(function (x) {
+      var r = x.r;
+      var past = x.d && x.d < today;
       var meta = [r.Time, r.Location, r.Notes].filter(Boolean).join(' · ');
-      return '<div class="card"><div class="when">' + esc(r.Date) + '</div>' +
-             '<div class="ev">' + esc(r.Event) + '</div>' +
-             (meta ? '<div class="meta">' + esc(meta) + '</div>' : '') + '</div>';
+      return '<div class="srow' + (past ? ' past' : '') + '">' +
+        '<div class="sdate">' + esc(r.Date) + '</div>' +
+        '<div class="sbody"><div class="sev">' + esc(r.Event) + '</div>' +
+        (meta ? '<div class="smeta">' + esc(meta) + '</div>' : '') + '</div></div>';
     }).join(''));
 
     // Location

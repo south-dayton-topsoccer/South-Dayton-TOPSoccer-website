@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — styles · Version: 3.1
+/* South Dayton TOPSoccer — styles · Version: 3.2
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
 
@@ -107,6 +107,20 @@ a:hover { text-decoration: underline; }
 .card .when { font-weight: 600; color: var(--ink); font-size: 1.1rem; }
 .card .ev { font-size: 1.05rem; margin: 4px 0; }
 .card .meta { color: var(--muted); font-size: .95rem; }
+
+/* Schedule — chronological list (past dates dimmed) */
+.sched { max-width: 760px; margin: 36px auto 0; text-align: left; }
+.srow { display: flex; gap: 20px; padding: 15px 4px; border-bottom: 1px solid var(--line); }
+.srow:first-child { border-top: 1px solid var(--line); }
+.srow .sdate { flex: 0 0 120px; font-weight: 600; }
+.srow .sbody { flex: 1; min-width: 0; }
+.srow .sev { font-weight: 500; }
+.srow .smeta { color: var(--muted); font-size: .95rem; margin-top: 3px; }
+.srow.past { opacity: .42; }
+@media (max-width: 560px) {
+  .srow { flex-direction: column; gap: 2px; }
+  .srow .sdate { flex: none; }
+}
 
 /* FAQs */
 .faqs { display: grid; gap: 0; max-width: 760px; margin: 36px auto 0; text-align: left; border-top: 1px solid var(--line); }
