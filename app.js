@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.13
+/* South Dayton TOPSoccer — renderer · Version: 1.14
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -285,6 +285,8 @@
     }
 
     // Contact
+    if (c.phone_label && $('phone-label')) setText('phone-label', c.phone_label);
+    if (c.email_label && $('email-label')) setText('email-label', c.email_label);
     if (c.hotline_phone && $('contact-phone')) {
       $('contact-phone').textContent = c.hotline_phone;
       $('contact-phone').setAttribute('href', 'tel:' + String(c.hotline_phone).replace(/[^\d+]/g, ''));

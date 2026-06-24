@@ -1,6 +1,6 @@
 /* =============================================================
    South Dayton TOPSoccer — site configuration
-   Version: 1.6
+   Version: 1.7
    -------------------------------------------------------------
    This is the ONLY file you edit on the site itself, and you
    really only touch ONE line: SHEET_ID.
@@ -49,7 +49,9 @@ window.SDTS_CONFIG = {
       hero_headline: 'Soccer for *every* child and young adult.',
       hero_subtext: 'An all-volunteer program for kids and adults with disabilities — built around fun and participation, not winning.',
       hotline_phone: '(937) 815-1548',
+      phone_label: 'Hotline',     // label before the phone number (e.g. Phone, Call us)
       contact_email: 'SDTSAdmin@gmail.com',
+      email_label: 'Email',       // label before the email address
       registration_open: 'TRUE',
       registration_url: 'https://www.southdaytontopsoccer.com/signup.html',
       registration_window: 'Registration for the fall season runs mid-July through early August.',
