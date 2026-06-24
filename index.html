@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<!-- South Dayton TOPSoccer — site shell · Version: 3.1
+     You should rarely need to edit this file. Content comes from
+     the Google Sheet (see config.js + README.md). -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>South Dayton TOPSoccer</title>
+  <meta name="description" content="South Dayton TOPSoccer — an all-volunteer soccer program for children and young adults with disabilities.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Field-closing / weather alert. Hidden unless turned on in the Sheet. -->
+  <div id="alert-banner" class="alert-banner" hidden>
+    <span class="alert-icon" aria-hidden="true">⚠️</span>
+    <span id="alert-text"></span>
+  </div>
+
+  <!-- Sticky navigation -->
+  <header class="nav">
+    <a class="brand" href="#top">
+      <span class="logo" aria-hidden="true">⚽</span>
+      <span id="brand-name">South Dayton TOPSoccer</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#involved">Get involved</a>
+      <a href="#schedule">Schedule</a>
+      <a href="#faqs">FAQs</a>
+      <a href="#contact">Contact</a>
+      <a id="nav-register" class="nav-cta" href="#register">Register</a>
+    </nav>
+  </header>
+
+  <main id="top">
+
+    <!-- Hero -->
+    <section class="hero">
+      <p class="eyebrow" id="tagline">The Outreach Program for Soccer</p>
+      <h1 id="hero-headline">Soccer for every child and young adult.</h1>
+      <p class="hero-sub" id="hero-subtext"></p>
+      <div class="hero-actions">
+        <a id="hero-register" class="btn btn-primary" href="#register">Join the team</a>
+        <a class="btn btn-ghost" href="#about">Learn more</a>
+      </div>
+    </section>
+
+    <!-- Optional announcement card (hidden unless set in the Sheet) -->
+    <section class="wrap">
+      <div id="announcement" class="announcement" hidden>
+        <strong>Announcement</strong>
+        <p id="announcement-text"></p>
+      </div>
+    </section>
+
+    <!-- Impact stats band -->
+    <section class="stats-band">
+      <div id="stats-list" class="stats-grid wrap"></div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section">
+      <h2>About the <em>program</em></h2>
+      <p id="about-text" class="lead"></p>
+      <p id="season-info" class="muted"></p>
+    </section>
+
+    <!-- Get involved -->
+    <section id="involved" class="section alt">
+      <h2>Get <em>involved</em></h2>
+      <div class="involve-grid">
+        <div class="involve-card">
+          <div class="involve-icon" aria-hidden="true">⚽</div>
+          <h3>Play</h3>
+          <p>Any child or young adult with special challenges, ages 5 and up, is welcome to join.</p>
+          <a id="involve-register" class="btn btn-primary" href="#register">Register</a>
+        </div>
+        <div class="involve-card">
+          <div class="involve-icon" aria-hidden="true">🙌</div>
+          <h3>Volunteer</h3>
+          <p>Coaches and buddies make this program possible. No experience needed — just enthusiasm.</p>
+          <a id="involve-volunteer" class="btn btn-ghost" href="#contact">Volunteer</a>
+        </div>
+        <div class="involve-card">
+          <div class="involve-icon" aria-hidden="true">💚</div>
+          <h3>Donate</h3>
+          <p>Your support keeps this program free-spirited and welcoming for every athlete.</p>
+          <a id="involve-donate" class="btn btn-ghost" href="#contact">Donate</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Register -->
+    <section id="register" class="section card-accent">
+      <h2>Join the <em>team</em></h2>
+      <p id="registration-window" class="lead"></p>
+      <p><a id="register-link" class="btn btn-primary" href="#" target="_blank" rel="noopener">Register now</a></p>
+      <p id="register-closed" class="muted" hidden>Registration is currently closed — check back soon.</p>
+    </section>
+
+    <!-- Schedule -->
+    <section id="schedule" class="section">
+      <h2>This season's <em>schedule</em></h2>
+      <div id="schedule-list" class="cards"></div>
+    </section>
+
+    <!-- Location -->
+    <section id="location" class="section alt">
+      <h2>Where we <em>play</em></h2>
+      <p class="lead"><span id="location-name">Oak Grove Park</span><span id="location-address-wrap">, <span id="location-address"></span></span></p>
+      <p><a id="location-maps" class="btn btn-ghost" href="#" target="_blank" rel="noopener">Open in Google Maps</a></p>
+    </section>
+
+    <!-- FAQs -->
+    <section id="faqs" class="section">
+      <h2>Common <em>questions</em></h2>
+      <div id="faq-list" class="faqs"></div>
+    </section>
+
+    <!-- Sponsors -->
+    <section id="sponsors" class="section alt">
+      <h2>Our <em>sponsors</em></h2>
+      <p class="muted">Our program wouldn't be what it is without the support of our sponsors, donors, and volunteers.</p>
+      <div id="sponsor-list" class="sponsors"></div>
+    </section>
+
+    <!-- Photos -->
+    <section id="photos" class="section">
+      <h2>Photo <em>gallery</em></h2>
+      <div id="photo-gallery" class="gallery"></div>
+      <p><a id="photos-link" class="btn btn-ghost" href="#" target="_blank" rel="noopener">View all season photos</a></p>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section card-accent">
+      <h2>Get in <em>touch</em></h2>
+      <p class="lead">Hotline: <a id="contact-phone" href="#"></a></p>
+      <p>Email: <a id="contact-email" href="#"></a></p>
+      <p class="muted" id="mailing-address"></p>
+      <div id="contact-list" class="contacts"></div>
+      <p class="muted" id="donate-text"></p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div id="social" class="social"></div>
+    <p><span id="footer-org">South Dayton TOPSoccer</span> is a 501(c)(3) non-profit organization.</p>
+    <p class="muted">© <span id="year"></span> <span id="footer-org2">South Dayton TOPSoccer</span>. All rights reserved.</p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

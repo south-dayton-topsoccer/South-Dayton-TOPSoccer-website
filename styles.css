@@ -1,0 +1,149 @@
+/* South Dayton TOPSoccer — styles · Version: 3.1
+   Apple-style: light, clean, big type, lots of whitespace, system font,
+   centered feature sections, blue accents. Palette tokens at the top. */
+
+:root {
+  --bg:      #ffffff;
+  --bg-alt:  #f5f5f7;   /* Apple's signature light gray section */
+  --ink:     #1d1d1f;   /* near-black text */
+  --muted:   #6e6e73;   /* secondary gray */
+  --blue:    #0071e3;   /* button blue */
+  --link:    #0066cc;   /* text-link blue */
+  --line:    #d2d2d7;
+  --radius:  18px;
+  --maxw:    980px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+          "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 60px; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font); line-height: 1.5; font-size: 17px;
+  -webkit-font-smoothing: antialiased; letter-spacing: -.01em;
+}
+
+h1, h2, h3 { font-weight: 600; line-height: 1.07; letter-spacing: -.02em; color: var(--ink); }
+h2 { font-size: clamp(2rem, 4.5vw, 3rem); margin: 0 0 .4rem; }
+h3 { font-size: 1.45rem; margin: 0 0 .4rem; }
+em { font-style: normal; color: inherit; }      /* headlines stay upright */
+p { margin: 0 0 1rem; }
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.muted { color: var(--muted); }
+.lead { font-size: clamp(1.15rem, 2.2vw, 1.5rem); color: var(--muted); font-weight: 400; }
+.eyebrow { font-size: 1.25rem; color: var(--blue); font-weight: 600; margin: 0 0 6px; letter-spacing: -.01em; }
+
+/* Alert banner */
+.alert-banner {
+  background: #bf4800; color: #fff; text-align: center;
+  padding: 11px 16px; font-weight: 500; font-size: .95rem;
+}
+.alert-banner .alert-icon { margin-right: 6px; }
+
+/* Nav — slim frosted bar */
+.nav {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 0 22px; height: 52px;
+  background: rgba(255,255,255,.8); backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+.brand { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 1.05rem; color: var(--ink); }
+.brand .logo { font-size: 1.2rem; }
+.nav-links { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
+.nav-links a { color: var(--ink); font-weight: 400; font-size: .82rem; opacity: .85; }
+.nav-links a:hover { opacity: 1; text-decoration: none; color: var(--link); }
+.nav-links a.nav-cta { background: var(--blue); color: #fff; padding: 6px 15px; border-radius: 980px; opacity: 1; font-weight: 500; }
+.nav-links a.nav-cta:hover { background: #0077ed; color: #fff; }
+
+/* Layout — full-bleed feature sections with centered content */
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+.section { padding: 90px 22px; text-align: center; }
+.section > * { max-width: var(--maxw); margin-left: auto; margin-right: auto; }
+.section .lead { max-width: 44ch; }
+.section.alt, .card-accent { background: var(--bg-alt); }
+
+/* Hero */
+.hero { padding: 96px 22px 80px; text-align: center; max-width: var(--maxw); margin: 0 auto; }
+.hero h1 { font-size: clamp(2.8rem, 7vw, 5rem); font-weight: 600; margin: 0 0 16px; }
+.hero-sub { font-size: clamp(1.25rem, 3vw, 1.8rem); color: var(--muted); font-weight: 400; max-width: 40ch; margin: 0 auto 28px; }
+.hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; align-items: center; }
+
+/* Buttons */
+.btn { display: inline-block; font-size: 1.05rem; font-weight: 400; cursor: pointer; }
+.btn-primary { background: var(--blue); color: #fff; padding: 12px 24px; border-radius: 980px; }
+.btn-primary:hover { background: #0077ed; text-decoration: none; }
+.btn-ghost { color: var(--link); padding: 12px 6px; }
+.btn-ghost::after { content: " \203A"; }            /* › chevron, Apple-style link */
+.btn-ghost:hover { text-decoration: underline; }
+
+/* Accent panel (register / contact) */
+.card-accent { background: var(--bg-alt); }
+
+/* Stats band — big centered numbers */
+.stats-band { padding: 56px 22px; background: var(--bg-alt); }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 28px; max-width: var(--maxw); margin: 0 auto; }
+.stats-grid .stat .num { font-size: 3rem; font-weight: 600; color: var(--ink); line-height: 1; letter-spacing: -.02em; }
+.stats-grid .stat .lbl { font-size: .95rem; color: var(--muted); margin-top: 8px; }
+
+/* Announcement */
+.announcement { margin: 22px auto 0; max-width: var(--maxw); padding: 16px 22px; background: var(--bg-alt); border-radius: var(--radius); text-align: center; }
+.announcement strong { display: block; color: var(--blue); text-transform: uppercase; letter-spacing: .04em; font-size: .72rem; }
+.announcement p { margin: 4px 0 0; }
+
+/* Get involved */
+.involve-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 36px; text-align: center; }
+.involve-card { border-radius: var(--radius); padding: 36px 26px; background: var(--bg-alt); }
+.involve-icon { font-size: 2.2rem; }
+.involve-card h3 { margin: 14px 0 8px; }
+.involve-card p { color: var(--muted); margin: 0 0 22px; }
+
+/* Cards (schedule) */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; margin-top: 36px; text-align: left; }
+.card { border-radius: var(--radius); padding: 24px; background: var(--bg-alt); }
+.section.alt .card, .section.alt .involve-card { background: #fff; }
+.card .when { font-weight: 600; color: var(--ink); font-size: 1.1rem; }
+.card .ev { font-size: 1.05rem; margin: 4px 0; }
+.card .meta { color: var(--muted); font-size: .95rem; }
+
+/* FAQs */
+.faqs { display: grid; gap: 0; max-width: 760px; margin: 36px auto 0; text-align: left; border-top: 1px solid var(--line); }
+.faq { border-bottom: 1px solid var(--line); }
+.faq summary { cursor: pointer; padding: 20px 4px; font-weight: 500; font-size: 1.15rem; list-style: none; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; float: right; color: var(--muted); font-weight: 400; font-size: 1.4rem; line-height: 1; }
+.faq[open] summary::after { content: "\2013"; }
+.faq .ans { padding: 0 4px 20px; color: var(--muted); }
+
+/* Sponsors */
+.sponsors { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin-top: 36px; }
+.sponsor { border-radius: var(--radius); padding: 26px; text-align: center; background: var(--bg-alt); font-weight: 500; }
+.section.alt .sponsor { background: #fff; }
+.sponsor .level { display: block; font-size: .75rem; color: var(--muted); font-weight: 400; text-transform: uppercase; letter-spacing: .05em; margin-top: 6px; }
+
+/* Contacts */
+.contacts { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 36px auto; text-align: left; max-width: var(--maxw); }
+.contact-card { border-radius: var(--radius); padding: 22px; background: #fff; }
+.contact-card .nm { font-weight: 600; font-size: 1.1rem; }
+.contact-card .role { color: var(--muted); font-size: .95rem; }
+
+/* Photo gallery */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 36px auto 28px; max-width: var(--maxw); }
+.gallery .shot { margin: 0; border-radius: var(--radius); overflow: hidden; background: var(--bg-alt); }
+.gallery .shot img { width: 100%; height: 220px; object-fit: cover; display: block; }
+.gallery .shot figcaption { font-size: .9rem; color: var(--muted); padding: 10px 14px; text-align: left; }
+
+/* Footer */
+.footer { padding: 40px 22px; background: var(--bg-alt); border-top: 1px solid var(--line); text-align: center; font-size: .8rem; color: var(--muted); }
+.footer p { margin: 4px 0; }
+.social { display: flex; gap: 22px; justify-content: center; margin-bottom: 16px; }
+.social a { color: var(--link); font-weight: 500; }
+
+@media (max-width: 640px) {
+  .section { padding: 64px 22px; }
+  .hero { padding: 64px 22px 52px; }
+  .nav-links { gap: 14px; }
+  .nav-links a { font-size: .78rem; }
+}

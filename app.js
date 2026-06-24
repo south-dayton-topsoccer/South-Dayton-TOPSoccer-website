@@ -1,0 +1,228 @@
+/* South Dayton TOPSoccer — renderer · Version: 1.2
+   Pulls content from the Google Sheet named in config.js (live), and
+   falls back to the built-in SAMPLE content if the sheet isn't set or
+   can't be reached. You should not need to edit this file. */
+
+(function () {
+  'use strict';
+
+  var CFG = window.SDTS_CONFIG || {};
+  var TABS = CFG.TABS || {};
+
+  // ---------- helpers ----------
+  function $(id) { return document.getElementById(id); }
+  function setText(id, val) { var el = $(id); if (el) el.textContent = (val == null ? '' : String(val)); }
+  function setHTML(id, html) { var el = $(id); if (el) el.innerHTML = html; }
+  function truthy(v) { return /^(true|yes|on|1)$/i.test(String(v == null ? '' : v).trim()); }
+  function esc(s) {
+    return (s == null ? '' : String(s)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  // Turn *word* into an italic emphasis span (for headlines). Escapes first.
+  function emphasize(s) {
+    return esc(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  }
+  // Make an <img>-friendly URL. Converts a Google Drive share link or file ID
+  // into a direct image URL; passes any other direct image URL through.
+  function imgUrl(u) {
+    u = String(u == null ? '' : u).trim();
+    if (!u) return '';
+    var m = u.match(/\/d\/([A-Za-z0-9_-]{20,})/) || u.match(/[?&]id=([A-Za-z0-9_-]{20,})/);
+    if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
+    if (/^[A-Za-z0-9_-]{25,}$/.test(u)) return 'https://drive.google.com/thumbnail?id=' + u + '&sz=w1200';
+    return u;
+  }
+
+  // Parse a Google Sheets gviz response into an array of row objects keyed by header label.
+  function parseGviz(text) {
+    var json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1));
+    var cols = (json.table.cols || []).map(function (c, i) { return (c.label || c.id || ('col' + i)).trim(); });
+    return (json.table.rows || []).map(function (r) {
+      var obj = {};
+      (r.c || []).forEach(function (cell, i) {
+        var key = cols[i] || ('col' + i);
+        obj[key] = cell ? (cell.f != null ? cell.f : cell.v) : '';
+        if (obj[key] == null) obj[key] = '';
+      });
+      return obj;
+    });
+  }
+
+  function fetchTab(tab) {
+    var url = 'https://docs.google.com/spreadsheets/d/' + CFG.SHEET_ID +
+              '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(tab);
+    return fetch(url).then(function (res) { return res.text(); }).then(parseGviz);
+  }
+
+  // Config tab is Key/Value pairs -> object
+  function rowsToConfig(rows) {
+    var o = {};
+    rows.forEach(function (r) {
+      var k = (r.Key || r.key || '').toString().trim();
+      if (k) o[k] = (r.Value != null ? r.Value : r.value);
+    });
+    return o;
+  }
+
+  // ---------- load ----------
+  function load() {
+    var S = CFG.SAMPLE || {};
+    if (!CFG.SHEET_ID) { return Promise.resolve(S); }   // preview mode
+
+    return Promise.all([
+      fetchTab(TABS.config).then(rowsToConfig).catch(function () { return S.config; }),
+      fetchTab(TABS.stats).catch(function () { return S.stats; }),
+      fetchTab(TABS.schedule).catch(function () { return S.schedule; }),
+      fetchTab(TABS.faqs).catch(function () { return S.faqs; }),
+      fetchTab(TABS.sponsors).catch(function () { return S.sponsors; }),
+      fetchTab(TABS.contacts).catch(function () { return S.contacts; }),
+      fetchTab(TABS.photos).catch(function () { return S.photos; })
+    ]).then(function (a) {
+      return { config: a[0] || S.config, stats: a[1] || S.stats, schedule: a[2] || S.schedule,
+               faqs: a[3] || S.faqs, sponsors: a[4] || S.sponsors, contacts: a[5] || S.contacts,
+               photos: a[6] || S.photos };
+    }).catch(function () { return S; });
+  }
+
+  // ---------- render ----------
+  function render(data) {
+    var c = data.config || {};
+
+    // Alert banner (field closings / weather)
+    if (truthy(c.alert_active) && c.alert_message) {
+      setText('alert-text', c.alert_message);
+      var ab = $('alert-banner'); if (ab) ab.hidden = false;
+    }
+
+    // Announcement card
+    if (c.announcement) {
+      setText('announcement-text', c.announcement);
+      var an = $('announcement'); if (an) an.hidden = false;
+    }
+
+    // Brand + hero
+    setText('brand-name', c.org_name);
+    setText('tagline', c.tagline);
+    setHTML('hero-headline', emphasize(c.hero_headline));
+    setText('hero-subtext', c.hero_subtext);
+    setText('footer-org', c.org_name);
+    setText('footer-org2', c.org_name);
+
+    // About
+    setText('about-text', c.about_text);
+    setText('season-info', c.season_info);
+
+    // Stats band
+    var stats = data.stats || [];
+    setHTML('stats-list', stats.map(function (s) {
+      return '<div class="stat"><div class="num">' + esc(s.Number || s.number) +
+             '</div><div class="lbl">' + esc(s.Label || s.label) + '</div></div>';
+    }).join(''));
+
+    // Get involved links
+    var regUrl = c.registration_url || '#register';
+    if ($('involve-register')) $('involve-register').setAttribute('href', regUrl);
+    if (c.volunteer_url && $('involve-volunteer')) $('involve-volunteer').setAttribute('href', c.volunteer_url);
+    if (c.donate_url && $('involve-donate')) $('involve-donate').setAttribute('href', c.donate_url);
+
+    // Registration section
+    setText('registration-window', c.registration_window);
+    var open = truthy(c.registration_open);
+    var rl = $('register-link'), rc = $('register-closed');
+    if (open) {
+      if (rl) { rl.setAttribute('href', regUrl); rl.hidden = false; }
+      if (rc) rc.hidden = true;
+    } else {
+      if (rl) rl.hidden = true;
+      if (rc) rc.hidden = false;
+    }
+
+    // Schedule
+    var sched = data.schedule || [];
+    setHTML('schedule-list', sched.map(function (r) {
+      var meta = [r.Time, r.Location, r.Notes].filter(Boolean).join(' · ');
+      return '<div class="card"><div class="when">' + esc(r.Date) + '</div>' +
+             '<div class="ev">' + esc(r.Event) + '</div>' +
+             (meta ? '<div class="meta">' + esc(meta) + '</div>' : '') + '</div>';
+    }).join(''));
+
+    // Location
+    setText('location-name', c.location_name);
+    if (c.location_address) { setText('location-address', c.location_address); }
+    else { var law = $('location-address-wrap'); if (law) law.hidden = true; }
+    if (c.location_maps_url && $('location-maps')) $('location-maps').setAttribute('href', c.location_maps_url);
+
+    // FAQs
+    var faqs = data.faqs || [];
+    setHTML('faq-list', faqs.map(function (f) {
+      return '<details class="faq"><summary>' + esc(f.Question || f.question) + '</summary>' +
+             '<div class="ans">' + esc(f.Answer || f.answer) + '</div></details>';
+    }).join(''));
+
+    // Sponsors
+    var sponsors = data.sponsors || [];
+    setHTML('sponsor-list', sponsors.map(function (s) {
+      var name = esc(s.Name || s.name);
+      var inner = (s.URL || s.url)
+        ? '<a href="' + esc(s.URL || s.url) + '" target="_blank" rel="noopener">' + name + '</a>'
+        : name;
+      var lvl = (s.Level || s.level) ? '<span class="level">' + esc(s.Level || s.level) + '</span>' : '';
+      return '<div class="sponsor">' + inner + lvl + '</div>';
+    }).join(''));
+
+    // Photo gallery (from the Photos tab)
+    var photos = data.photos || [];
+    setHTML('photo-gallery', photos.map(function (p) {
+      var src = imgUrl(p.Image || p.image || p.URL || p.url);
+      if (!src) return '';
+      var cap = p.Caption || p.caption || '';
+      return '<figure class="shot"><img loading="lazy" src="' + esc(src) + '" alt="' +
+             esc(cap || 'South Dayton TOPSoccer') + '">' +
+             (cap ? '<figcaption>' + esc(cap) + '</figcaption>' : '') + '</figure>';
+    }).join(''));
+
+    // Full-album link (optional)
+    var pl = $('photos-link');
+    if (pl) {
+      if (c.photos_url) { pl.setAttribute('href', c.photos_url); pl.hidden = false; }
+      else { pl.hidden = true; }
+    }
+
+    // Contact
+    if (c.hotline_phone && $('contact-phone')) {
+      $('contact-phone').textContent = c.hotline_phone;
+      $('contact-phone').setAttribute('href', 'tel:' + String(c.hotline_phone).replace(/[^\d+]/g, ''));
+    }
+    if (c.contact_email && $('contact-email')) {
+      $('contact-email').textContent = c.contact_email;
+      $('contact-email').setAttribute('href', 'mailto:' + c.contact_email);
+    }
+    setText('mailing-address', c.mailing_address);
+    setText('donate-text', c.donate_text);
+
+    var contacts = data.contacts || [];
+    setHTML('contact-list', contacts.map(function (p) {
+      var lines = [];
+      if (p.Role || p.role) lines.push('<div class="role">' + esc(p.Role || p.role) + '</div>');
+      if (p.Phone || p.phone) lines.push('<div>' + esc(p.Phone || p.phone) + '</div>');
+      if (p.Email || p.email) lines.push('<div><a href="mailto:' + esc(p.Email || p.email) + '">' + esc(p.Email || p.email) + '</a></div>');
+      return '<div class="contact-card"><div class="nm">' + esc(p.Name || p.name) + '</div>' + lines.join('') + '</div>';
+    }).join(''));
+
+    // Social links
+    var social = [];
+    if (c.facebook_url) social.push('<a href="' + esc(c.facebook_url) + '" target="_blank" rel="noopener">Facebook</a>');
+    if (c.instagram_url) social.push('<a href="' + esc(c.instagram_url) + '" target="_blank" rel="noopener">Instagram</a>');
+    setHTML('social', social.join(''));
+
+    // Footer year
+    setText('year', new Date().getFullYear());
+
+    document.title = (c.org_name || 'South Dayton TOPSoccer');
+  }
+
+  load().then(render).catch(function (e) {
+    // Last-ditch: render from sample so the page is never blank.
+    try { render(CFG.SAMPLE || {}); } catch (_) {}
+    if (window.console) console.error('SDTS render error:', e);
+  });
+})();
