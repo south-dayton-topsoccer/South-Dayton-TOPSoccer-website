@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.7
+/* South Dayton TOPSoccer — renderer · Version: 1.9
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -170,6 +170,24 @@
     var sched = (data.schedule || []).map(function (r) {
       return { r: r, d: schedDate_(r.Date, year) };
     }).sort(function (a, b) { return (a.d ? a.d.getTime() : 0) - (b.d ? b.d.getTime() : 0); });
+
+    // "Subscribe to the schedule" calendar button (webcal feed from config)
+    var calBtn = $('cal-subscribe');
+    var calNote = $('cal-note');
+    if (calBtn) {
+      if (c.calendar_url) {
+        calBtn.setAttribute('href', c.calendar_url); calBtn.hidden = false;
+        if (calNote) {
+          var httpsUrl = String(c.calendar_url).replace(/^webcal:/i, 'https:');
+          calNote.innerHTML = 'Using Google Calendar? Add it under <em>Other calendars → + → From URL</em>: ' +
+            esc(httpsUrl);
+          calNote.hidden = false;
+        }
+      } else {
+        calBtn.hidden = true;
+        if (calNote) calNote.hidden = true;
+      }
+    }
 
     var listEl = $('schedule-list');
     if (listEl) listEl.className = 'sched';     // switch from card grid to list

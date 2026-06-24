@@ -1,6 +1,6 @@
 /* =============================================================
    South Dayton TOPSoccer — site configuration
-   Version: 1.3
+   Version: 1.4
    -------------------------------------------------------------
    This is the ONLY file you edit on the site itself, and you
    really only touch ONE line: SHEET_ID.
@@ -51,6 +51,7 @@ window.SDTS_CONFIG = {
       registration_open: 'TRUE',
       registration_url: 'https://www.southdaytontopsoccer.com/signup.html',
       registration_window: 'Registration for the fall season runs mid-July through early August.',
+      calendar_url: '',   // webcal://…/exec from the SDTS Calendar Feed script (Subscribe button)
       volunteer_url: 'https://www.southdaytontopsoccer.com/volunteer.html',
       donate_url: '',
       facebook_url: '',
