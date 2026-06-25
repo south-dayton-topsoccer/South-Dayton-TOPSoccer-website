@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.16
+/* South Dayton TOPSoccer — renderer · Version: 1.17
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -276,13 +276,23 @@
     }).join(''));
 
     // Photo gallery (from the Photos tab)
+    // Add "?ids" to the site URL to overlay each photo's Drive filename — makes
+    // it easy to spot a bad photo here and go delete that file in the folder.
+    // Hovering any photo also shows its filename as a tooltip.
     var photos = data.photos || [];
-    setHTML('photo-gallery', photos.map(function (p) {
-      var src = imgUrl(p.Image || p.image || p.URL || p.url);
+    var showIds = /[?&#]ids\b/i.test(location.search + location.hash);
+    setHTML('photo-gallery', photos.map(function (p, i) {
+      var raw = p.Image || p.image || p.URL || p.url;
+      var src = imgUrl(raw);
       if (!src) return '';
       var cap = p.Caption || p.caption || '';
+      var file = String(p.File || p.file || p.Filename || p.filename || '').trim();
+      var idm = String(raw).match(/[-\w]{25,}/);                 // drive file id, if any
+      var token = file || (idm ? '…' + idm[0].slice(-6) : ('#' + (i + 1)));
+      var titleAttr = esc((file || ('photo ' + (i + 1))) + (cap ? ' — ' + cap : ''));
       return '<figure class="shot"><img loading="lazy" src="' + esc(src) + '" alt="' +
-             esc(cap || 'South Dayton TOPSoccer') + '">' +
+             esc(cap || 'South Dayton TOPSoccer') + '" title="' + titleAttr + '">' +
+             (showIds ? '<span class="fileid">' + esc(token) + '</span>' : '') +
              (cap ? '<figcaption>' + esc(cap) + '</figcaption>' : '') + '</figure>';
     }).join(''));
 
