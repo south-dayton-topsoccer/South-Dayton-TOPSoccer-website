@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.17
+/* South Dayton TOPSoccer — renderer · Version: 1.18
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -117,14 +117,18 @@
       fetchTab(TABS.faqs).catch(function () { return S.faqs; }),
       fetchTab(TABS.sponsors).catch(function () { return S.sponsors; }),
       fetchTab(TABS.contacts).catch(function () { return S.contacts; }),
-      fetchTab(TABS.photos).catch(function () { return S.photos; })
+      fetchTab(TABS.photos).catch(function () { return S.photos; }),
+      // Volunteers: when live, if the tab is missing/empty show nothing (don't
+      // fall back to the sample teams — those would be fake names on the site).
+      fetchTab(TABS.volunteers).catch(function () { return []; })
     ]).then(function (a) {
       var cfg = (a[0] && a[0].org_name) ? a[0] : S.config;   // empty/blocked sheet -> sample
       var nz = function (arr, fb) { return (arr && arr.length) ? arr : fb; };
       return { config: cfg,
                stats: nz(a[1], S.stats), schedule: nz(a[2], S.schedule),
                faqs: nz(a[3], S.faqs), sponsors: nz(a[4], S.sponsors),
-               contacts: nz(a[5], S.contacts), photos: nz(a[6], S.photos) };
+               contacts: nz(a[5], S.contacts), photos: nz(a[6], S.photos),
+               volunteers: (a[7] && a[7].length) ? a[7] : [] };
     }).catch(function () { return S; });
   }
 
@@ -274,6 +278,40 @@
       var lvl = (s.Level || s.level) ? '<span class="level">' + esc(s.Level || s.level) + '</span>' : '';
       return '<div class="sponsor">' + inner + lvl + '</div>';
     }).join(''));
+
+    // Volunteer Teams (from the Volunteers tab). Team + Coaches always show;
+    // Organization + Season are optional. Heading + intro come from config.
+    // The whole section hides itself when there are no teams.
+    if ($('volunteers-heading') && c.volunteers_heading) {
+      $('volunteers-heading').innerHTML = emphasize(c.volunteers_heading);
+    }
+    if ($('volunteers-intro')) {
+      if (c.volunteers_intro) setText('volunteers-intro', c.volunteers_intro);
+      else $('volunteers-intro').hidden = true;
+    }
+    var vteams = (data.volunteers || []).filter(function (v) {
+      return (v.Team || v.team || v.Name || v.name || '').toString().trim();
+    });
+    var vSection = $('volunteers');
+    if (vteams.length) {
+      if (vSection) vSection.hidden = false;
+      setHTML('volunteer-list', vteams.map(function (v) {
+        var team    = v.Team || v.team || v.Name || v.name || '';
+        var coaches = String(v.Coaches || v.coaches || v.Coach || v.coach || '').trim();
+        var org     = String(v.Organization || v.organization || v.School || v.school || v.Org || v.org || '').trim();
+        var season  = String(v.Season || v.season || v.Year || v.year || '').trim();
+        var tags = '';
+        if (org)    tags += '<span class="vtag">' + esc(org) + '</span>';
+        if (season) tags += '<span class="vtag vseason">' + esc(season) + '</span>';
+        return '<div class="vteam">' +
+          '<div class="vname">' + esc(team) + '</div>' +
+          (coaches ? '<div class="vcoach">' + esc(coaches) + '</div>' : '') +
+          (tags ? '<div class="vtags">' + tags + '</div>' : '') +
+        '</div>';
+      }).join(''));
+    } else if (vSection) {
+      vSection.hidden = true;
+    }
 
     // Photo gallery (from the Photos tab)
     // Add "?ids" to the site URL to overlay each photo's Drive filename — makes

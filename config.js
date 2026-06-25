@@ -1,6 +1,6 @@
 /* =============================================================
    South Dayton TOPSoccer — site configuration
-   Version: 1.7
+   Version: 1.8
    -------------------------------------------------------------
    This is the ONLY file you edit on the site itself, and you
    really only touch ONE line: SHEET_ID.
@@ -30,9 +30,10 @@ window.SDTS_CONFIG = {
     stats:    'Stats',
     schedule: 'Schedule',
     faqs:     'FAQs',
-    sponsors: 'Sponsors',
-    contacts: 'Contacts',
-    photos:   'Photos'
+    sponsors:   'Sponsors',
+    contacts:   'Contacts',
+    photos:     'Photos',
+    volunteers: 'Volunteers'
   },
 
   // -----------------------------------------------------------
@@ -61,6 +62,10 @@ window.SDTS_CONFIG = {
       facebook_url: '',
       instagram_url: '',
       schedule_heading: '',   // optional schedule section heading; blank = "This season's schedule"
+      // Volunteer Teams recognition section (driven by the Volunteers tab).
+      // Both are optional — blank uses the built-in defaults.
+      volunteers_heading: 'Our *volunteer teams*',  // use *word* for the italic accent
+      volunteers_intro: 'This program thrives because entire teams from our community show up to play, coach, and cheer. With gratitude to:',
       season_info: 'Our season runs August through October. All practices and games are played Wednesday evenings and Sunday afternoons at Oak Grove Park in Centerville.',
       about_text: 'TOPSoccer is a national US Youth Soccer program for children and young adults with disabilities. Any child or young adult ages 5 and up who is not able to compete effectively in a local recreational league — for any reason — is welcome to play. Coaches provide equal opportunity for all children, regardless of ability. While we are based in the Centerville/Washington Township area, children from all areas are invited to play.',
       location_name: 'Oak Grove Park',
@@ -87,6 +92,12 @@ window.SDTS_CONFIG = {
     ],
     sponsors: [
       { Name: 'Your sponsor here', URL: '', Level: 'Sponsor' }
+    ],
+    // Volunteer teams: Team + Coaches always show; Organization + Season optional.
+    volunteers: [
+      { Team: 'Centerville Eagles Varsity Soccer', Coaches: 'Coach Maria Lopez', Organization: 'Centerville High School', Season: 'Fall 2025' },
+      { Team: 'Bellbrook Golden Eagles', Coaches: 'Coach Dan Pruitt & Coach Amy Reed', Organization: 'Bellbrook High School', Season: 'Fall 2025' },
+      { Team: 'Washington Twp Youth Club U14', Coaches: 'Coach Steve Hall', Organization: 'WT Soccer Club', Season: 'Fall 2025' }
     ],
     contacts: [
       { Name: 'TOPSoccer Hotline', Role: 'South Dayton program', Email: '', Phone: '(937) 815-1548' },

@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — styles · Version: 3.7
+/* South Dayton TOPSoccer — styles · Version: 3.8
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
 
@@ -156,6 +156,18 @@ a:hover { text-decoration: underline; }
 .gallery .shot .fileid { position: absolute; top: 8px; left: 8px; max-width: calc(100% - 16px);
   background: rgba(0,0,0,.74); color: #fff; font-size: .72rem; font-weight: 600;
   line-height: 1.25; padding: 3px 7px; border-radius: 6px; word-break: break-all; }
+
+/* Volunteer Teams — community recognition cards (from the Volunteers tab) */
+.vteams { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;
+  margin: 36px auto 0; max-width: var(--maxw); justify-content: center; }
+.vteam { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px 22px 18px; text-align: left; }
+.vteam .vname { font-weight: 700; font-size: 1.12rem; color: var(--ink); line-height: 1.25; }
+.vteam .vcoach { color: var(--muted); margin-top: 6px; font-size: .96rem; }
+.vteam .vtags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.vteam .vtag { font-size: .76rem; font-weight: 600; color: var(--link);
+  background: rgba(0,113,227,.08); border-radius: 999px; padding: 4px 11px; }
+.vteam .vtag.vseason { color: var(--muted); background: var(--bg-alt); }
 
 /* Footer */
 .footer { padding: 40px 22px; background: var(--bg-alt); border-top: 1px solid var(--line); text-align: center; font-size: .8rem; color: var(--muted); }
