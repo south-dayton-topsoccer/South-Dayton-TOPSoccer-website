@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — styles · Version: 3.8
+/* South Dayton TOPSoccer — styles · Version: 3.9
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
 
@@ -118,7 +118,7 @@ a:hover { text-decoration: underline; }
 .srow .sev { font-weight: 500; }
 .srow .stime { color: var(--muted); white-space: nowrap; }
 .srow .sloc { color: var(--muted); font-size: .95rem; }
-.srow.past { opacity: .42; }
+.srow.past { opacity: .58; }
 @media (max-width: 640px) {
   .srow { grid-template-columns: 1fr; gap: 1px; padding: 12px 4px; }
   .srow .stime, .srow .sloc { font-size: .92rem; }
