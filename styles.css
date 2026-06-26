@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — styles · Version: 3.9
+/* South Dayton TOPSoccer — styles · Version: 3.10
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
 
@@ -148,7 +148,12 @@ a:hover { text-decoration: underline; }
 /* Photo gallery */
 /* auto-fill (not auto-fit) so a single photo stays a normal tile instead of
    stretching to fill the whole row. All tiles are a uniform height. */
-.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 36px auto 28px; max-width: var(--maxw); justify-content: center; }
+/* Season picker above the gallery (shown only when 2+ seasons exist) */
+.filter-wrap { display: flex; justify-content: center; margin: 24px 0 0; }
+.filter-wrap:empty { margin: 0; }
+.season-filter { display: inline-flex; align-items: center; gap: 10px; font-size: .95rem; color: var(--muted); }
+.season-filter select { font: inherit; padding: 8px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); cursor: pointer; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 20px auto 28px; max-width: var(--maxw); justify-content: center; }
 .gallery .shot { margin: 0; border-radius: var(--radius); overflow: hidden; background: var(--bg-alt); position: relative; }
 .gallery .shot img { width: 100%; height: 200px; object-fit: cover; display: block; }
 .gallery .shot figcaption { font-size: .9rem; color: var(--muted); padding: 10px 14px; text-align: left; }

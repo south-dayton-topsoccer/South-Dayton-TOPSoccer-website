@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.19
+/* South Dayton TOPSoccer — renderer · Version: 1.20
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -315,26 +315,59 @@
       vSection.hidden = true;
     }
 
-    // Photo gallery (from the Photos tab)
-    // Add "?ids" to the site URL to overlay each photo's Drive filename — makes
-    // it easy to spot a bad photo here and go delete that file in the folder.
-    // Hovering any photo also shows its filename as a tooltip.
-    var photos = data.photos || [];
+    // Photo gallery (from the Photos tab), organized by Season.
+    // Season = the Drive subfolder name (the Photo Sync script fills it in);
+    // photos loose in the main folder come through as "Other". A Season picker
+    // appears above the gallery when there's more than one season.
+    // Add "?ids" to the site URL to overlay each photo's Drive filename, and
+    // hovering any photo shows its filename as a tooltip.
+    var photos = (data.photos || []).filter(function (p) { return imgUrl(p.Image || p.image || p.URL || p.url); });
     var showIds = /[?&#]ids\b/i.test(location.search + location.hash);
+    function seasonOf(p) { return String(p.Season || p.season || '').trim() || 'Other'; }
+    function yearOf(s) { var m = String(s).match(/(20\d\d)/); return m ? +m[1] : 0; }
+    var seasons = [];
+    photos.forEach(function (p) { var s = seasonOf(p); if (seasons.indexOf(s) < 0) seasons.push(s); });
+    seasons.sort(function (a, b) {        // newest year first; "Other" always last
+      if (a === 'Other') return 1; if (b === 'Other') return -1;
+      var ya = yearOf(a), yb = yearOf(b);
+      return (yb !== ya) ? yb - ya : (a < b ? -1 : 1);
+    });
     setHTML('photo-gallery', photos.map(function (p, i) {
       var raw = p.Image || p.image || p.URL || p.url;
       var src = imgUrl(raw);
-      if (!src) return '';
       var cap = p.Caption || p.caption || '';
       var file = String(p.File || p.file || p.Filename || p.filename || '').trim();
       var idm = String(raw).match(/[-\w]{25,}/);                 // drive file id, if any
       var token = file || (idm ? '…' + idm[0].slice(-6) : ('#' + (i + 1)));
       var titleAttr = esc((file || ('photo ' + (i + 1))) + (cap ? ' — ' + cap : ''));
-      return '<figure class="shot"><img loading="lazy" src="' + esc(src) + '" alt="' +
+      return '<figure class="shot" data-season="' + esc(seasonOf(p)) + '"><img loading="lazy" src="' + esc(src) + '" alt="' +
              esc(cap || 'South Dayton TOPSoccer') + '" title="' + titleAttr + '">' +
              (showIds ? '<span class="fileid">' + esc(token) + '</span>' : '') +
              (cap ? '<figcaption>' + esc(cap) + '</figcaption>' : '') + '</figure>';
     }).join(''));
+
+    // Season picker — only when there's more than one season to choose from.
+    var fwrap = $('season-filter-wrap');
+    if (fwrap) {
+      if (seasons.length > 1) {
+        var opts = seasons.map(function (s) { return '<option value="' + esc(s) + '">' + esc(s) + '</option>'; }).join('');
+        fwrap.innerHTML = '<label class="season-filter"><span>Season:</span>' +
+          '<select id="season-select" aria-label="Filter photos by season">' + opts +
+          '<option value="__all">All seasons</option></select></label>';
+        var sel = $('season-select');
+        var applySeason = function () {
+          var v = sel.value, figs = document.querySelectorAll('#photo-gallery .shot');
+          for (var k = 0; k < figs.length; k++) {
+            figs[k].style.display = (v === '__all' || figs[k].getAttribute('data-season') === v) ? '' : 'none';
+          }
+        };
+        sel.addEventListener('change', applySeason);
+        sel.value = seasons[0];     // default to the newest season
+        applySeason();
+      } else {
+        fwrap.innerHTML = '';
+      }
+    }
 
     // Full-album link (optional)
     var pl = $('photos-link');

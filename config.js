@@ -1,6 +1,6 @@
 /* =============================================================
    South Dayton TOPSoccer — site configuration
-   Version: 1.8
+   Version: 1.9
    -------------------------------------------------------------
    This is the ONLY file you edit on the site itself, and you
    really only touch ONE line: SHEET_ID.
@@ -109,13 +109,14 @@ window.SDTS_CONFIG = {
       { Number: '100%', Label: 'Volunteer-run' },
       { Number: 'Since 2013', Label: 'Serving South Dayton' }
     ],
-    // Photos: paste a shareable Google Drive image link (or any direct image URL)
-    // in Image, plus an optional Caption. (These previews are placeholders.)
+    // Photos: the Photo Sync script fills these in (Image, Caption, File, Season).
+    // Season = the Drive subfolder name; photos loose in the main folder = "Other".
+    // The site shows a Season picker when more than one season is present.
     photos: [
-      { Image: 'https://picsum.photos/seed/sdts1/800/600', Caption: 'Game day at Oak Grove Park' },
-      { Image: 'https://picsum.photos/seed/sdts2/800/600', Caption: 'Players and their buddies' },
-      { Image: 'https://picsum.photos/seed/sdts3/800/600', Caption: 'Team huddle' },
-      { Image: 'https://picsum.photos/seed/sdts4/800/600', Caption: 'Celebrating a goal' }
+      { Image: 'https://picsum.photos/seed/sdts1/800/600', Caption: 'Game day at Oak Grove Park', Season: 'Fall 2026' },
+      { Image: 'https://picsum.photos/seed/sdts2/800/600', Caption: 'Players and their buddies', Season: 'Fall 2026' },
+      { Image: 'https://picsum.photos/seed/sdts3/800/600', Caption: 'Team huddle', Season: 'Fall 2025' },
+      { Image: 'https://picsum.photos/seed/sdts4/800/600', Caption: 'Celebrating a goal', Season: 'Fall 2025' }
     ]
   }
 };
