@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — styles · Version: 3.10
+/* South Dayton TOPSoccer — styles · Version: 3.11
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
 
@@ -155,7 +155,9 @@ a:hover { text-decoration: underline; }
 .season-filter select { font: inherit; padding: 8px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); cursor: pointer; }
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 20px auto 28px; max-width: var(--maxw); justify-content: center; }
 .gallery .shot { margin: 0; border-radius: var(--radius); overflow: hidden; background: var(--bg-alt); position: relative; }
-.gallery .shot img { width: 100%; height: 200px; object-fit: cover; display: block; }
+/* object-position: center top keeps the TOP of each photo (heads) and crops the
+   bottom instead of trimming equally — rescues most "heads cut off" group shots. */
+.gallery .shot img { width: 100%; height: 200px; object-fit: cover; object-position: center top; display: block; }
 .gallery .shot figcaption { font-size: .9rem; color: var(--muted); padding: 10px 14px; text-align: left; }
 /* Filename overlay — only rendered when "?ids" is on the URL (admin/pruning aid) */
 .gallery .shot .fileid { position: absolute; top: 8px; left: 8px; max-width: calc(100% - 16px);
