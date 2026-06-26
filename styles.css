@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — styles · Version: 3.12
+/* South Dayton TOPSoccer — styles · Version: 3.14
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
 
@@ -7,8 +7,8 @@
   --bg-alt:  #f5f5f7;   /* Apple's signature light gray section */
   --ink:     #1d1d1f;   /* near-black text */
   --muted:   #6e6e73;   /* secondary gray */
-  --blue:    #0071e3;   /* button blue */
-  --link:    #0066cc;   /* text-link blue */
+  --blue:    #1f4e87;   /* button blue — brand navy-blue, matches the crest family */
+  --link:    #1f4e87;   /* text-link blue — same brand blue */
   --line:    #d2d2d7;
   --radius:  18px;
   --maxw:    980px;
@@ -53,6 +53,10 @@ a:hover { text-decoration: underline; }
 .brand { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 1.05rem; color: var(--ink); }
 .brand .logo { font-size: 1.2rem; }
 .brand-logo { height: 30px; width: auto; display: block; }
+/* Optional nav flair (flying ball + gold trail), shown when nav_flair=TRUE. */
+.nav-flair { flex: 0 1 auto; display: flex; align-items: center; justify-content: center; min-width: 0; }
+.nav-flair svg { height: 48px; width: auto; max-width: 100%; display: block; }
+@media (max-width: 900px) { .nav-flair { display: none; } }
 .nav-links { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
 .nav-links a { color: var(--ink); font-weight: 400; font-size: .82rem; opacity: .85; }
 .nav-links a:hover { opacity: 1; text-decoration: none; color: var(--link); }
@@ -173,7 +177,7 @@ a:hover { text-decoration: underline; }
 .vteam .vcoach { color: var(--muted); margin-top: 6px; font-size: .96rem; }
 .vteam .vtags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .vteam .vtag { font-size: .76rem; font-weight: 600; color: var(--link);
-  background: rgba(0,113,227,.08); border-radius: 999px; padding: 4px 11px; }
+  background: rgba(31,78,135,.10); border-radius: 999px; padding: 4px 11px; }
 .vteam .vtag.vseason { color: var(--muted); background: var(--bg-alt); }
 
 /* Footer */
