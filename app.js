@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.20
+/* South Dayton TOPSoccer — renderer · Version: 1.22
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -166,8 +166,13 @@
       } else if (brandName) {
         brandName.hidden = false;
       }
-      brandLogo.style.height = logoH + 'px';
+      // Set the height as a CSS variable (not a hard inline height) so the
+      // stylesheet can cap the logo on small screens. See .brand-logo in CSS.
+      brandLogo.style.setProperty('--brand-logo-h', logoH + 'px');
     }
+    // Optional nav flair (flying ball + gold trail) — off unless nav_flair=TRUE.
+    if (truthy(c.nav_flair) && $('nav-flair')) $('nav-flair').hidden = false;
+
     setHTML('hero-headline', emphasize(c.hero_headline));
     setText('hero-subtext', c.hero_subtext);
     setText('footer-org', c.org_name);

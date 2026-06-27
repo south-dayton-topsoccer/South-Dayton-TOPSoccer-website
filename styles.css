@@ -1,4 +1,4 @@
-/* South Dayton TOPSoccer — styles · Version: 3.14
+/* South Dayton TOPSoccer — styles · Version: 3.16
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
 
@@ -50,9 +50,12 @@ a:hover { text-decoration: underline; }
   background: rgba(255,255,255,.92); backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid rgba(0,0,0,.08);
 }
-.brand { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 1.05rem; color: var(--ink); }
+.brand { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 1.05rem; color: var(--ink); min-width: 0; }
 .brand .logo { font-size: 1.2rem; }
-.brand-logo { height: 30px; width: auto; display: block; }
+/* Height comes from the --brand-logo-h variable that app.js sets from the
+   sheet's logo_height (default 30px). max-width keeps wide banner logos from
+   ever overflowing their container; the mobile query below caps the size. */
+.brand-logo { height: var(--brand-logo-h, 30px); width: auto; max-width: 100%; display: block; }
 /* Optional nav flair (flying ball + gold trail), shown when nav_flair=TRUE. */
 .nav-flair { flex: 0 1 auto; display: flex; align-items: center; justify-content: center; min-width: 0; }
 .nav-flair svg { height: 48px; width: auto; max-width: 100%; display: block; }
@@ -61,7 +64,7 @@ a:hover { text-decoration: underline; }
 .nav-links a { color: var(--ink); font-weight: 400; font-size: .82rem; opacity: .85; }
 .nav-links a:hover { opacity: 1; text-decoration: none; color: var(--link); }
 .nav-links a.nav-cta { background: var(--blue); color: #fff; padding: 6px 15px; border-radius: 980px; opacity: 1; font-weight: 500; }
-.nav-links a.nav-cta:hover { background: #0077ed; color: #fff; }
+.nav-links a.nav-cta:hover { background: #2a5fa0; color: #fff; }
 
 /* Layout — full-bleed feature sections with centered content */
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
@@ -79,7 +82,7 @@ a:hover { text-decoration: underline; }
 /* Buttons */
 .btn { display: inline-block; font-size: 1.05rem; font-weight: 400; cursor: pointer; }
 .btn-primary { background: var(--blue); color: #fff; padding: 12px 24px; border-radius: 980px; }
-.btn-primary:hover { background: #0077ed; text-decoration: none; }
+.btn-primary:hover { background: #2a5fa0; text-decoration: none; }
 .btn-ghost { color: var(--link); padding: 12px 6px; }
 .btn-ghost::after { content: " \203A"; }            /* › chevron, Apple-style link */
 .btn-ghost:hover { text-decoration: underline; }
@@ -189,6 +192,11 @@ a:hover { text-decoration: underline; }
 @media (max-width: 640px) {
   .section { padding: 64px 22px; }
   .hero { padding: 64px 22px 52px; }
-  .nav-links { gap: 14px; }
-  .nav-links a { font-size: .78rem; }
+  /* Stacked header on phones: logo centered on its own row, links wrap below.
+     This prevents a wide banner logo from overflowing and shoving the nav. */
+  .nav { flex-wrap: wrap; padding: 10px 16px; row-gap: 8px; }
+  .brand { flex: 1 1 100%; justify-content: center; }
+  .brand-logo { height: auto; max-height: 46px; max-width: 88%; }
+  .nav-links { flex: 1 1 100%; justify-content: center; gap: 14px 16px; }
+  .nav-links a { font-size: .82rem; }
 }
