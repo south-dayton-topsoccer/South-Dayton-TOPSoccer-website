@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<!-- South Dayton TOPSoccer — site shell · Version: 3.9
+<!-- South Dayton TOPSoccer — site shell · Version: 3.12
+     v3.11: version-stamped the CSS/JS links (?v=…) so browsers always fetch the
+     current files instead of a stale cached copy. Bump the number on each change.
      You should rarely need to edit this file. Content comes from
      the Google Sheet (see config.js + README.md). -->
 <html lang="en">
@@ -13,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=316">
 </head>
 <body>
 
@@ -29,12 +31,56 @@
       <img id="brand-logo" class="brand-logo" src="mark.svg" alt="" />
       <span id="brand-name">South Dayton TOPSoccer</span>
     </a>
+
+    <!-- Optional soccer-ball flair for the empty nav space. Hidden unless
+         nav_flair is set to TRUE in the Config sheet. Auto-hides on phones. -->
+    <div id="nav-flair" class="nav-flair" aria-hidden="true" hidden>
+      <svg viewBox="0 0 230 80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="navball" cx="38%" cy="32%" r="75%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="62%" stop-color="#eef1f4"/>
+            <stop offset="100%" stop-color="#cfd6dd"/>
+          </radialGradient>
+          <clipPath id="navbc"><circle cx="190" cy="40" r="25"/></clipPath>
+        </defs>
+        <g>
+          <g transform="translate(160,46) scale(0.92)"><polygon points="0,-6 1.53,-2.1 5.7,-1.85 2.47,0.8 3.53,4.85 0,2.6 -3.53,4.85 -2.47,0.8 -5.7,-1.85 -1.53,-2.1" fill="#d4af37"/></g>
+          <g transform="translate(142,52) scale(0.68)" opacity="0.9"><polygon points="0,-6 1.53,-2.1 5.7,-1.85 2.47,0.8 3.53,4.85 0,2.6 -3.53,4.85 -2.47,0.8 -5.7,-1.85 -1.53,-2.1" fill="#cda23c"/></g>
+          <g transform="translate(131,38) scale(0.54)" opacity="0.85"><polygon points="0,-6 1.53,-2.1 5.7,-1.85 2.47,0.8 3.53,4.85 0,2.6 -3.53,4.85 -2.47,0.8 -5.7,-1.85 -1.53,-2.1" fill="#e0c05a"/></g>
+          <g transform="translate(118,56) scale(0.5)" opacity="0.78"><polygon points="0,-6 1.53,-2.1 5.7,-1.85 2.47,0.8 3.53,4.85 0,2.6 -3.53,4.85 -2.47,0.8 -5.7,-1.85 -1.53,-2.1" fill="#d4af37"/></g>
+          <g transform="translate(104,44) scale(0.46)" opacity="0.7"><polygon points="0,-6 1.53,-2.1 5.7,-1.85 2.47,0.8 3.53,4.85 0,2.6 -3.53,4.85 -2.47,0.8 -5.7,-1.85 -1.53,-2.1" fill="#cda23c"/></g>
+          <g transform="translate(90,53) scale(0.4)" opacity="0.6"><polygon points="0,-6 1.53,-2.1 5.7,-1.85 2.47,0.8 3.53,4.85 0,2.6 -3.53,4.85 -2.47,0.8 -5.7,-1.85 -1.53,-2.1" fill="#d4af37"/></g>
+          <g transform="translate(76,46) scale(0.35)" opacity="0.5"><polygon points="0,-6 1.53,-2.1 5.7,-1.85 2.47,0.8 3.53,4.85 0,2.6 -3.53,4.85 -2.47,0.8 -5.7,-1.85 -1.53,-2.1" fill="#e0c05a"/></g>
+          <g transform="translate(60,52) scale(0.3)" opacity="0.4"><polygon points="0,-6 1.53,-2.1 5.7,-1.85 2.47,0.8 3.53,4.85 0,2.6 -3.53,4.85 -2.47,0.8 -5.7,-1.85 -1.53,-2.1" fill="#d4af37"/></g>
+          <circle cx="112" cy="49" r="1.5" fill="#d4af37" opacity="0.75"/>
+          <circle cx="96" cy="40" r="1.3" fill="#e0c05a" opacity="0.65"/>
+          <circle cx="80" cy="52" r="1.1" fill="#d4af37" opacity="0.5"/>
+          <circle cx="64" cy="46" r="1" fill="#cda23c" opacity="0.4"/>
+        </g>
+        <ellipse cx="193" cy="70" rx="22" ry="3.5" fill="#14294a" opacity="0.10"/>
+        <circle cx="190" cy="40" r="25" fill="url(#navball)" stroke="#14294a" stroke-width="1.4"/>
+        <g clip-path="url(#navbc)" fill="none" stroke="#14294a" stroke-width="1.6" stroke-linejoin="round">
+          <polygon points="190,29 201,37 196,51 184,51 179,37" fill="#14294a" stroke="none"/>
+          <line x1="190" y1="29" x2="190" y2="16"/>
+          <line x1="201" y1="37" x2="216" y2="31"/>
+          <line x1="196" y1="51" x2="205" y2="65"/>
+          <line x1="184" y1="51" x2="175" y2="65"/>
+          <line x1="179" y1="37" x2="164" y2="31"/>
+          <path d="M165,21 L179,16 L190,16"/>
+          <path d="M214,32 L218,46 L207,65"/>
+          <path d="M174,66 L190,70 L206,66"/>
+        </g>
+      </svg>
+    </div>
+
     <nav class="nav-links" aria-label="Primary">
       <a href="#about">About</a>
       <a href="#involved">Get involved</a>
       <a href="#schedule">Schedule</a>
       <a href="#faqs">FAQs</a>
       <a href="#contact">Contact</a>
+      <a href="#photos">Photos</a>
       <a id="nav-register" class="nav-cta" href="#register">Register</a>
     </nav>
   </header>
@@ -166,7 +212,7 @@
     <p class="muted">© <span id="year"></span> <span id="footer-org2">South Dayton TOPSoccer</span>. All rights reserved.</p>
   </footer>
 
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="config.js?v=110"></script>
+  <script src="app.js?v=122"></script>
 </body>
 </html>
