@@ -1,4 +1,5 @@
-/* South Dayton TOPSoccer — styles · Version: 3.16
+/* South Dayton TOPSoccer — styles · Version: 3.17
+   v3.17: removed dead .nav-flair rules (soccer-ball + gold-trail graphic deleted).
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
 
@@ -56,10 +57,6 @@ a:hover { text-decoration: underline; }
    sheet's logo_height (default 30px). max-width keeps wide banner logos from
    ever overflowing their container; the mobile query below caps the size. */
 .brand-logo { height: var(--brand-logo-h, 30px); width: auto; max-width: 100%; display: block; }
-/* Optional nav flair (flying ball + gold trail), shown when nav_flair=TRUE. */
-.nav-flair { flex: 0 1 auto; display: flex; align-items: center; justify-content: center; min-width: 0; }
-.nav-flair svg { height: 48px; width: auto; max-width: 100%; display: block; }
-@media (max-width: 900px) { .nav-flair { display: none; } }
 .nav-links { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
 .nav-links a { color: var(--ink); font-weight: 400; font-size: .82rem; opacity: .85; }
 .nav-links a:hover { opacity: 1; text-decoration: none; color: var(--link); }

@@ -1,4 +1,5 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.22
+/* South Dayton TOPSoccer — renderer · Version: 1.23
+   v1.23: removed nav-flair toggle (soccer-ball + gold-trail graphic deleted from markup).
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
    can't be reached. You should not need to edit this file. */
@@ -170,8 +171,7 @@
       // stylesheet can cap the logo on small screens. See .brand-logo in CSS.
       brandLogo.style.setProperty('--brand-logo-h', logoH + 'px');
     }
-    // Optional nav flair (flying ball + gold trail) — off unless nav_flair=TRUE.
-    if (truthy(c.nav_flair) && $('nav-flair')) $('nav-flair').hidden = false;
+    // Nav flair (flying ball + gold trail) removed — element no longer in markup.
 
     setHTML('hero-headline', emphasize(c.hero_headline));
     setText('hero-subtext', c.hero_subtext);
