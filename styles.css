@@ -1,6 +1,6 @@
-/* South Dayton TOPSoccer — styles · Version: 3.18
-   v3.18: sticky .topbar wraps banner + nav (banner stays pinned); logo
-   shrink-on-scroll rule (.nav.shrunk .brand-logo) + transition added.
+/* South Dayton TOPSoccer — styles · Version: 3.19
+   v3.19: reverted the .topbar (banner no longer pinned); kept the logo
+   shrink-on-scroll rule (.nav.shrunk .brand-logo) + transition.
    v3.17: removed dead .nav-flair rules (soccer-ball + gold-trail graphic deleted).
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
@@ -45,13 +45,9 @@ a:hover { text-decoration: underline; }
 }
 .alert-banner .alert-icon { margin-right: 6px; }
 
-/* Sticky top bar wraps the alert banner + nav so BOTH stay pinned to the top
-   the entire time you scroll (the banner used to scroll away). */
-.topbar { position: sticky; top: 0; z-index: 30; }
-
 /* Nav — slim frosted bar */
 .nav {
-  position: relative; z-index: 20;
+  position: sticky; top: 0; z-index: 20;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding: 10px 22px; min-height: 56px;
   background: rgba(255,255,255,.92); backdrop-filter: saturate(180%) blur(20px);

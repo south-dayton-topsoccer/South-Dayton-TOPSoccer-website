@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- South Dayton TOPSoccer — site shell · Version: 3.14
-     v3.14: wrapped the alert banner + nav in a sticky .topbar so the banner
-     stays pinned on top the whole time; logo now shrinks on scroll (see app.js).
+<!-- South Dayton TOPSoccer — site shell · Version: 3.15
+     v3.15: reverted the pinned-banner topbar (Safari tinted the toolbar orange).
+     Banner scrolls away as before; kept the logo shrink-on-scroll (see app.js).
      v3.13: removed the nav-flair soccer-ball + gold-trail graphic from the header.
      v3.11: version-stamped the CSS/JS links (?v=…) so browsers always fetch the
      current files instead of a stale cached copy. Bump the number on each change.
@@ -18,37 +18,34 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=318">
+  <link rel="stylesheet" href="styles.css?v=319">
 </head>
 <body>
 
-  <!-- Sticky top bar: alert banner + nav ride together so the banner stays
-       pinned on top the whole time (not just the nav). -->
-  <div class="topbar">
-    <!-- Field-closing / weather alert. Hidden unless turned on in the Sheet. -->
-    <div id="alert-banner" class="alert-banner" hidden>
-      <span class="alert-icon" aria-hidden="true">⚠️</span>
-      <span id="alert-text"></span>
-    </div>
-
-    <!-- Navigation -->
-    <header class="nav">
-      <a class="brand" href="#top">
-        <img id="brand-logo" class="brand-logo" src="mark.svg" alt="" />
-        <span id="brand-name">South Dayton TOPSoccer</span>
-      </a>
-
-      <nav class="nav-links" aria-label="Primary">
-        <a href="#about">About</a>
-        <a href="#involved">Get involved</a>
-        <a href="#schedule">Schedule</a>
-        <a href="#faqs">FAQs</a>
-        <a href="#contact">Contact</a>
-        <a href="#photos">Photos</a>
-        <a id="nav-register" class="nav-cta" href="#register">Register</a>
-      </nav>
-    </header>
+  <!-- Field-closing / weather alert. Hidden unless turned on in the Sheet.
+       Scrolls away with the page (only the nav below stays pinned). -->
+  <div id="alert-banner" class="alert-banner" hidden>
+    <span class="alert-icon" aria-hidden="true">⚠️</span>
+    <span id="alert-text"></span>
   </div>
+
+  <!-- Sticky navigation -->
+  <header class="nav">
+    <a class="brand" href="#top">
+      <img id="brand-logo" class="brand-logo" src="mark.svg" alt="" />
+      <span id="brand-name">South Dayton TOPSoccer</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#involved">Get involved</a>
+      <a href="#schedule">Schedule</a>
+      <a href="#faqs">FAQs</a>
+      <a href="#contact">Contact</a>
+      <a href="#photos">Photos</a>
+      <a id="nav-register" class="nav-cta" href="#register">Register</a>
+    </nav>
+  </header>
 
   <main id="top">
 
@@ -178,6 +175,6 @@
   </footer>
 
   <script src="config.js?v=110"></script>
-  <script src="app.js?v=124"></script>
+  <script src="app.js?v=125"></script>
 </body>
 </html>
