@@ -1,4 +1,6 @@
-/* South Dayton TOPSoccer — styles · Version: 3.17
+/* South Dayton TOPSoccer — styles · Version: 3.18
+   v3.18: sticky .topbar wraps banner + nav (banner stays pinned); logo
+   shrink-on-scroll rule (.nav.shrunk .brand-logo) + transition added.
    v3.17: removed dead .nav-flair rules (soccer-ball + gold-trail graphic deleted).
    Apple-style: light, clean, big type, lots of whitespace, system font,
    centered feature sections, blue accents. Palette tokens at the top. */
@@ -43,9 +45,13 @@ a:hover { text-decoration: underline; }
 }
 .alert-banner .alert-icon { margin-right: 6px; }
 
+/* Sticky top bar wraps the alert banner + nav so BOTH stay pinned to the top
+   the entire time you scroll (the banner used to scroll away). */
+.topbar { position: sticky; top: 0; z-index: 30; }
+
 /* Nav — slim frosted bar */
 .nav {
-  position: sticky; top: 0; z-index: 20;
+  position: relative; z-index: 20;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding: 10px 22px; min-height: 56px;
   background: rgba(255,255,255,.92); backdrop-filter: saturate(180%) blur(20px);
@@ -56,7 +62,11 @@ a:hover { text-decoration: underline; }
 /* Height comes from the --brand-logo-h variable that app.js sets from the
    sheet's logo_height (default 30px). max-width keeps wide banner logos from
    ever overflowing their container; the mobile query below caps the size. */
-.brand-logo { height: var(--brand-logo-h, 30px); width: auto; max-width: 100%; display: block; }
+.brand-logo { height: var(--brand-logo-h, 30px); width: auto; max-width: 100%; display: block; transition: height .25s ease; }
+/* Shrink-on-scroll: once you scroll down the logo compacts; scroll back to the
+   top and it grows again. --brand-logo-h-shrunk is set by app.js from the base
+   logo height (see brand-logo sizing there). */
+.nav.shrunk .brand-logo { height: var(--brand-logo-h-shrunk, 34px); }
 .nav-links { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
 .nav-links a { color: var(--ink); font-weight: 400; font-size: .82rem; opacity: .85; }
 .nav-links a:hover { opacity: 1; text-decoration: none; color: var(--link); }

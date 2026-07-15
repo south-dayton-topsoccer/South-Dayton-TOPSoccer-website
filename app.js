@@ -1,4 +1,6 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.23
+/* South Dayton TOPSoccer — renderer · Version: 1.24
+   v1.24: setupTopbar() — logo shrink-on-scroll (.nav.shrunk toggle) + dynamic
+   scroll-padding so anchor jumps clear the always-visible sticky top bar.
    v1.23: removed nav-flair toggle (soccer-ball + gold-trail graphic deleted from markup).
    Pulls content from the Google Sheet named in config.js (live), and
    falls back to the built-in SAMPLE content if the sheet isn't set or
@@ -170,6 +172,10 @@
       // Set the height as a CSS variable (not a hard inline height) so the
       // stylesheet can cap the logo on small screens. See .brand-logo in CSS.
       brandLogo.style.setProperty('--brand-logo-h', logoH + 'px');
+      // Shrunk height for the scroll effect: ~62% of the base, floored so it
+      // never disappears. Used by the .nav.shrunk rule in styles.css.
+      var shrunkH = Math.max(28, Math.round(logoH * 0.62));
+      brandLogo.style.setProperty('--brand-logo-h-shrunk', shrunkH + 'px');
     }
     // Nav flair (flying ball + gold trail) removed — element no longer in markup.
 
@@ -420,5 +426,32 @@
     // Last-ditch: render from sample so the page is never blank.
     try { render(CFG.SAMPLE || {}); } catch (_) {}
     if (window.console) console.error('SDTS render error:', e);
-  });
+  }).then(setupTopbar);
+
+  // ---------- sticky top bar behaviour ----------
+  // Shrink the logo once the page scrolls, grow it back at the top; and keep
+  // anchor jumps clear of the (now taller, always-visible) sticky top bar.
+  function setupTopbar() {
+    var nav = document.querySelector('.nav');
+    var topbar = document.querySelector('.topbar');
+
+    function onScroll() {
+      if (nav) nav.classList.toggle('shrunk', window.scrollY > 40);
+    }
+    // Match scroll-padding to the real top-bar height so headings aren't hidden
+    // behind the banner + nav when you click an anchor link.
+    function syncAnchorOffset() {
+      if (topbar) {
+        document.documentElement.style.scrollPaddingTop =
+          (topbar.offsetHeight + 8) + 'px';
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', syncAnchorOffset, { passive: true });
+    onScroll();
+    syncAnchorOffset();
+    // Re-measure shortly after load (custom logo image / fonts settle).
+    setTimeout(syncAnchorOffset, 400);
+  }
 })();
