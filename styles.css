@@ -1,4 +1,9 @@
-/* South Dayton TOPSoccer — styles · Version: 3.19
+/* South Dayton TOPSoccer — styles · Version: 3.20
+   v3.20: fixed iPhone "rocking side to side" (horizontal scroll). A long
+   unbreakable URL in the schedule calendar note (#cal-note) was forcing the
+   page ~120px wider than the phone screen. Added overflow-wrap: break-word so
+   long strings/URLs wrap, plus overflow-x: clip on <html> as a sticky-safe
+   safety net, and max-width:100% on media. See the html/body rules below.
    v3.19: reverted the .topbar (banner no longer pinned); kept the logo
    shrink-on-scroll rule (.nav.shrunk .brand-logo) + transition.
    v3.17: removed dead .nav-flair rules (soccer-ball + gold-trail graphic deleted).
@@ -20,12 +25,19 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+/* overflow-x: clip stops any stray-wide element from creating horizontal
+   scroll ("rocking") on phones. Unlike overflow:hidden it does NOT make <html>
+   a scroll container, so the sticky nav keeps working. */
+html { scroll-behavior: smooth; scroll-padding-top: 84px; overflow-x: clip; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
   font-family: var(--font); line-height: 1.5; font-size: 17px;
   -webkit-font-smoothing: antialiased; letter-spacing: -.01em;
+  /* Break long words / URLs instead of letting them widen the page. */
+  overflow-wrap: break-word; word-break: break-word;
 }
+/* Media never overflows its container. */
+img, svg, iframe, video { max-width: 100%; }
 
 h1, h2, h3 { font-weight: 600; line-height: 1.07; letter-spacing: -.02em; color: var(--ink); }
 h2 { font-size: clamp(2rem, 4.5vw, 3rem); margin: 0 0 .4rem; }
