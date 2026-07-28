@@ -1,4 +1,7 @@
-/* South Dayton TOPSoccer — styles · Version: 3.20
+/* South Dayton TOPSoccer — styles · Version: 3.21
+   v3.21: printable schedule styles (.print-root + @media print) for the new
+   "Print / Save as PDF" button — hidden on screen, laid out as a clean table
+   when printing. See the block at the end of this file.
    v3.20: fixed iPhone "rocking side to side" (horizontal scroll). A long
    unbreakable URL in the schedule calendar note (#cal-note) was forcing the
    page ~120px wider than the phone screen. Added overflow-wrap: break-word so
@@ -214,4 +217,36 @@ a:hover { text-decoration: underline; }
   .brand-logo { height: auto; max-height: 46px; max-width: 88%; }
   .nav-links { flex: 1 1 100%; justify-content: center; gap: 14px 16px; }
   .nav-links a { font-size: .82rem; }
+}
+
+
+/* ---------- Printable schedule (Print / Save as PDF button) ---------- */
+/* Built by app.js into #schedule-print; hidden on screen, revealed only when
+   printing after the button adds .print-schedule to <body>. Normal Ctrl+P
+   (without the flag) prints the page as usual. */
+.print-root { display: none; }
+
+@media print {
+  body.print-schedule > *:not(.print-root) { display: none !important; }
+  body.print-schedule .print-root { display: block !important; }
+  body.print-schedule { background: #fff; }
+
+  .print-root { color: #000; font-family: var(--font); }
+  .print-root .p-head { display: flex; align-items: center; gap: 14px;
+    border-bottom: 2px solid #1f4e87; padding-bottom: 10px; margin-bottom: 16px; }
+  .print-root .p-logo { height: 48px; width: auto; }
+  .print-root .p-org { font-size: 19px; font-weight: 700; color: #1f4e87; line-height: 1.15; }
+  .print-root .p-title { font-size: 13px; color: #333; margin-top: 2px; }
+  .print-root .p-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .print-root .p-table th { text-align: left; font-size: 10px; text-transform: uppercase;
+    letter-spacing: .05em; color: #555; border-bottom: 1.5px solid #999; padding: 7px 8px; }
+  .print-root .p-table td { padding: 7px 8px; border-bottom: 1px solid #ddd; vertical-align: top; }
+  .print-root .p-table .p-date { white-space: nowrap; font-weight: 600; }
+  .print-root .p-table .p-ev { font-weight: 500; }
+  .print-root .p-table .p-time { white-space: nowrap; color: #333; }
+  .print-root .p-table .p-loc { color: #444; }
+  .print-root .p-table tr { page-break-inside: avoid; }
+  .print-root .p-table thead { display: table-header-group; }  /* repeat header each page */
+  .print-root .p-foot { margin-top: 16px; font-size: 10px; color: #777; }
+  @page { margin: 0.6in; }
 }

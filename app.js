@@ -1,4 +1,7 @@
-/* South Dayton TOPSoccer — renderer · Version: 1.25
+/* South Dayton TOPSoccer — renderer · Version: 1.26
+   v1.26: "Print / Save as PDF" button for the schedule. buildSchedulePrint()
+   renders a clean printable table into #schedule-print; the button sets
+   body.print-schedule and calls window.print() (browsers offer Save as PDF).
    v1.25: setupLogoShrink() — logo compacts on scroll, grows back at the top.
    (Reverted the pinned-banner topbar; the banner scrolls away as before.)
    v1.23: removed nav-flair toggle (soccer-ball + gold-trail graphic deleted from markup).
@@ -41,6 +44,13 @@
     u = String(u == null ? '' : u).trim();
     if (!u) return '';
     return /^(https?:|mailto:|tel:)/i.test(u) ? u : 'https://' + u;
+  }
+
+  // Strip a markdown link [text](url) down to just its text — for the printable
+  // schedule, where a raw URL would just be noise on paper.
+  function plain(s) {
+    s = String(s == null ? '' : s).trim();
+    return s.replace(/\[([^\]]+)\]\s*\(?\s*https?:\/\/[^\s)]+\)?/g, '$1').trim();
   }
 
   // Parse a schedule "Date" cell like "Sun, Aug 16" into a Date (year supplied
@@ -268,6 +278,10 @@
       '</div>';
     }).join(''));
 
+    // Printable schedule (the "Print / Save as PDF" button) — full season, past + future.
+    buildSchedulePrint(sched, c, year);
+    wireSchedulePrint(sched.length > 0);
+
     // Location
     setText('location-name', c.location_name);
     if (c.location_address) { setText('location-address', c.location_address); }
@@ -436,5 +450,59 @@
     function onScroll() { nav.classList.toggle('shrunk', window.scrollY > 40); }
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+  }
+
+  // ---------- printable schedule ----------
+  // Render a clean, standalone schedule table into #schedule-print. It's hidden
+  // on screen; the @media print rules reveal only it when body has .print-schedule.
+  function buildSchedulePrint(sched, c, year) {
+    var root = $('schedule-print');
+    if (!root) return;
+    var org = c.org_name || 'South Dayton TOPSoccer';
+    var yr = c.season_year || year;
+    var logo = $('brand-logo');
+    var logoSrc = (logo && logo.getAttribute('src')) ? logo.getAttribute('src') : 'mark.svg';
+    var rows = (sched || []).map(function (x) {
+      var r = x.r;
+      var dateLabel = x.d
+        ? x.d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+        : (r.Date || '');
+      var loc = [r.Location, r.Notes].filter(Boolean).map(plain).join(' \u00b7 ');
+      return '<tr>' +
+        '<td class="p-date">' + esc(dateLabel) + '</td>' +
+        '<td class="p-ev">' + esc(r.Event) + '</td>' +
+        '<td class="p-time">' + esc(r.Time || '') + '</td>' +
+        '<td class="p-loc">' + esc(loc) + '</td>' +
+      '</tr>';
+    }).join('');
+    var printed = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    root.innerHTML =
+      '<div class="p-head">' +
+        '<img class="p-logo" src="' + esc(logoSrc) + '" alt="">' +
+        '<div><div class="p-org">' + esc(org) + '</div>' +
+        '<div class="p-title">' + esc(yr) + ' Season Schedule</div></div>' +
+      '</div>' +
+      '<table class="p-table"><thead><tr>' +
+        '<th>Date</th><th>Event</th><th>Time</th><th>Location &amp; notes</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table>' +
+      '<div class="p-foot">southdaytontopsoccer.com \u00b7 Printed ' + esc(printed) + '</div>';
+  }
+
+  // Show + wire the Print button once there are schedule rows.
+  function wireSchedulePrint(hasRows) {
+    var btn = $('schedule-print-btn');
+    if (!btn) return;
+    btn.hidden = !hasRows;
+    if (!hasRows || btn.getAttribute('data-wired')) return;
+    btn.setAttribute('data-wired', '1');
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.body.classList.add('print-schedule');
+      var cleanup = function () { document.body.classList.remove('print-schedule'); };
+      window.addEventListener('afterprint', function onAfter() {
+        cleanup(); window.removeEventListener('afterprint', onAfter);
+      });
+      setTimeout(function () { window.print(); }, 60);
+    });
   }
 })();

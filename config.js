@@ -1,6 +1,6 @@
 /* =============================================================
    South Dayton TOPSoccer — site configuration
-   Version: 1.9
+   Version: 1.10
    -------------------------------------------------------------
    This is the ONLY file you edit on the site itself, and you
    really only touch ONE line: SHEET_ID.
@@ -62,6 +62,7 @@ window.SDTS_CONFIG = {
       facebook_url: '',
       instagram_url: '',
       schedule_heading: '',   // optional schedule section heading; blank = "This season's schedule"
+      nav_flair: 'FALSE',     // TRUE = show the flying-ball + gold-trail graphic in the nav bar
       // Volunteer Teams recognition section (driven by the Volunteers tab).
       // Both are optional — blank uses the built-in defaults.
       volunteers_heading: 'Our *volunteer teams*',  // use *word* for the italic accent
