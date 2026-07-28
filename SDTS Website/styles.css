@@ -1,0 +1,252 @@
+/* South Dayton TOPSoccer — styles · Version: 3.21
+   v3.21: printable schedule styles (.print-root + @media print) for the new
+   "Print / Save as PDF" button — hidden on screen, laid out as a clean table
+   when printing. See the block at the end of this file.
+   v3.20: fixed iPhone "rocking side to side" (horizontal scroll). A long
+   unbreakable URL in the schedule calendar note (#cal-note) was forcing the
+   page ~120px wider than the phone screen. Added overflow-wrap: break-word so
+   long strings/URLs wrap, plus overflow-x: clip on <html> as a sticky-safe
+   safety net, and max-width:100% on media. See the html/body rules below.
+   v3.19: reverted the .topbar (banner no longer pinned); kept the logo
+   shrink-on-scroll rule (.nav.shrunk .brand-logo) + transition.
+   v3.17: removed dead .nav-flair rules (soccer-ball + gold-trail graphic deleted).
+   Apple-style: light, clean, big type, lots of whitespace, system font,
+   centered feature sections, blue accents. Palette tokens at the top. */
+
+:root {
+  --bg:      #ffffff;
+  --bg-alt:  #f5f5f7;   /* Apple's signature light gray section */
+  --ink:     #1d1d1f;   /* near-black text */
+  --muted:   #6e6e73;   /* secondary gray */
+  --blue:    #1f4e87;   /* button blue — brand navy-blue, matches the crest family */
+  --link:    #1f4e87;   /* text-link blue — same brand blue */
+  --line:    #d2d2d7;
+  --radius:  18px;
+  --maxw:    980px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+          "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+/* overflow-x: clip stops any stray-wide element from creating horizontal
+   scroll ("rocking") on phones. Unlike overflow:hidden it does NOT make <html>
+   a scroll container, so the sticky nav keeps working. */
+html { scroll-behavior: smooth; scroll-padding-top: 84px; overflow-x: clip; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font); line-height: 1.5; font-size: 17px;
+  -webkit-font-smoothing: antialiased; letter-spacing: -.01em;
+  /* Break long words / URLs instead of letting them widen the page. */
+  overflow-wrap: break-word; word-break: break-word;
+}
+/* Media never overflows its container. */
+img, svg, iframe, video { max-width: 100%; }
+
+h1, h2, h3 { font-weight: 600; line-height: 1.07; letter-spacing: -.02em; color: var(--ink); }
+h2 { font-size: clamp(2rem, 4.5vw, 3rem); margin: 0 0 .4rem; }
+h3 { font-size: 1.45rem; margin: 0 0 .4rem; }
+em { font-style: normal; color: inherit; }      /* headlines stay upright */
+p { margin: 0 0 1rem; }
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.muted { color: var(--muted); }
+.lead { font-size: clamp(1.15rem, 2.2vw, 1.5rem); color: var(--muted); font-weight: 400; }
+.eyebrow { font-size: 1.25rem; color: var(--blue); font-weight: 600; margin: 0 0 6px; letter-spacing: -.01em; }
+
+/* Alert banner */
+.alert-banner {
+  background: #bf4800; color: #fff; text-align: center;
+  padding: 16px 20px; font-weight: 500; font-size: 1.02rem; line-height: 1.4;
+}
+.alert-banner .alert-icon { margin-right: 6px; }
+
+/* Nav — slim frosted bar */
+.nav {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 10px 22px; min-height: 56px;
+  background: rgba(255,255,255,.92); backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+.brand { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 1.05rem; color: var(--ink); min-width: 0; }
+.brand .logo { font-size: 1.2rem; }
+/* Height comes from the --brand-logo-h variable that app.js sets from the
+   sheet's logo_height (default 30px). max-width keeps wide banner logos from
+   ever overflowing their container; the mobile query below caps the size. */
+.brand-logo { height: var(--brand-logo-h, 30px); width: auto; max-width: 100%; display: block; transition: height .25s ease; }
+/* Shrink-on-scroll: once you scroll down the logo compacts; scroll back to the
+   top and it grows again. --brand-logo-h-shrunk is set by app.js from the base
+   logo height (see brand-logo sizing there). */
+.nav.shrunk .brand-logo { height: var(--brand-logo-h-shrunk, 34px); }
+.nav-links { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
+.nav-links a { color: var(--ink); font-weight: 400; font-size: .82rem; opacity: .85; }
+.nav-links a:hover { opacity: 1; text-decoration: none; color: var(--link); }
+.nav-links a.nav-cta { background: var(--blue); color: #fff; padding: 6px 15px; border-radius: 980px; opacity: 1; font-weight: 500; }
+.nav-links a.nav-cta:hover { background: #2a5fa0; color: #fff; }
+
+/* Layout — full-bleed feature sections with centered content */
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+.section { padding: 64px 22px; text-align: center; }
+.section > * { max-width: var(--maxw); margin-left: auto; margin-right: auto; }
+.section .lead { max-width: 44ch; }
+.section.alt, .card-accent { background: var(--bg-alt); }
+
+/* Hero */
+.hero { padding: 80px 22px 64px; text-align: center; max-width: var(--maxw); margin: 0 auto; }
+.hero h1 { font-size: clamp(2.8rem, 7vw, 5rem); font-weight: 600; margin: 0 0 16px; }
+.hero-sub { font-size: clamp(1.25rem, 3vw, 1.8rem); color: var(--muted); font-weight: 400; max-width: 40ch; margin: 0 auto 28px; }
+.hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; align-items: center; }
+
+/* Buttons */
+.btn { display: inline-block; font-size: 1.05rem; font-weight: 400; cursor: pointer; }
+.btn-primary { background: var(--blue); color: #fff; padding: 12px 24px; border-radius: 980px; }
+.btn-primary:hover { background: #2a5fa0; text-decoration: none; }
+.btn-ghost { color: var(--link); padding: 12px 6px; }
+.btn-ghost::after { content: " \203A"; }            /* › chevron, Apple-style link */
+.btn-ghost:hover { text-decoration: underline; }
+
+/* Accent panel (register / contact) */
+.card-accent { background: var(--bg-alt); }
+
+/* Stats band — big centered numbers */
+.stats-band { padding: 56px 22px; background: var(--bg-alt); }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 28px; max-width: var(--maxw); margin: 0 auto; }
+.stats-grid .stat .num { font-size: 3rem; font-weight: 600; color: var(--ink); line-height: 1; letter-spacing: -.02em; }
+.stats-grid .stat .lbl { font-size: .95rem; color: var(--muted); margin-top: 8px; }
+
+/* Announcement */
+.announcement { margin: 22px auto 0; max-width: var(--maxw); padding: 16px 22px; background: var(--bg-alt); border-radius: var(--radius); text-align: center; }
+.announcement strong { display: block; color: var(--blue); text-transform: uppercase; letter-spacing: .04em; font-size: .72rem; }
+.announcement p { margin: 4px 0 0; }
+
+/* Get involved */
+.involve-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 36px; text-align: center; }
+.involve-card { border-radius: var(--radius); padding: 36px 26px; background: var(--bg-alt); }
+.involve-icon { font-size: 2.2rem; }
+.involve-card h3 { margin: 14px 0 8px; }
+.involve-card p { color: var(--muted); margin: 0 0 22px; }
+
+/* Cards (schedule) */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; margin-top: 36px; text-align: left; }
+.card { border-radius: var(--radius); padding: 24px; background: var(--bg-alt); }
+.section.alt .card, .section.alt .involve-card { background: #fff; }
+.card .when { font-weight: 600; color: var(--ink); font-size: 1.1rem; }
+.card .ev { font-size: 1.05rem; margin: 4px 0; }
+.card .meta { color: var(--muted); font-size: .95rem; }
+
+/* Schedule — compact one-line-per-row table (past dates dimmed) */
+.sched { max-width: 880px; margin: 32px auto 0; text-align: left; }
+.srow { display: grid; grid-template-columns: 108px 1.1fr 140px 1.4fr; gap: 16px;
+        align-items: baseline; padding: 11px 4px; border-bottom: 1px solid var(--line); }
+.srow:first-child { border-top: 1px solid var(--line); }
+.srow .sdate { font-weight: 600; white-space: nowrap; }
+.srow .sev { font-weight: 500; }
+.srow .stime { color: var(--muted); white-space: nowrap; }
+.srow .sloc { color: var(--muted); font-size: .95rem; }
+.srow.past { opacity: .58; }
+@media (max-width: 640px) {
+  .srow { grid-template-columns: 1fr; gap: 1px; padding: 12px 4px; }
+  .srow .stime, .srow .sloc { font-size: .92rem; }
+}
+
+/* FAQs */
+.faqs { display: grid; gap: 0; max-width: 760px; margin: 36px auto 0; text-align: left; border-top: 1px solid var(--line); }
+.faq { border-bottom: 1px solid var(--line); }
+.faq summary { cursor: pointer; padding: 20px 4px; font-weight: 500; font-size: 1.15rem; list-style: none; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; float: right; color: var(--muted); font-weight: 400; font-size: 1.4rem; line-height: 1; }
+.faq[open] summary::after { content: "\2013"; }
+.faq .ans { padding: 0 4px 20px; color: var(--muted); }
+
+/* Sponsors */
+.sponsors { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin-top: 36px; }
+.sponsor { border-radius: var(--radius); padding: 26px; text-align: center; background: var(--bg-alt); font-weight: 500; }
+.section.alt .sponsor { background: #fff; }
+.sponsor .level { display: block; font-size: .75rem; color: var(--muted); font-weight: 400; text-transform: uppercase; letter-spacing: .05em; margin-top: 6px; }
+
+/* Contacts */
+.contacts { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 36px auto; text-align: left; max-width: var(--maxw); }
+.contact-card { border-radius: var(--radius); padding: 22px; background: #fff; }
+.contact-card .nm { font-weight: 600; font-size: 1.1rem; }
+.contact-card .role { color: var(--muted); font-size: .95rem; }
+
+/* Photo gallery */
+/* auto-fill (not auto-fit) so a single photo stays a normal tile instead of
+   stretching to fill the whole row. All tiles are a uniform height. */
+/* Season picker above the gallery (shown only when 2+ seasons exist) */
+.filter-wrap { display: flex; justify-content: center; margin: 24px 0 0; }
+.filter-wrap:empty { margin: 0; }
+.season-filter { display: inline-flex; align-items: center; gap: 10px; font-size: .95rem; color: var(--muted); }
+.season-filter select { font: inherit; padding: 8px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); cursor: pointer; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 20px auto 28px; max-width: var(--maxw); justify-content: center; }
+.gallery .shot { margin: 0; border-radius: var(--radius); overflow: hidden; background: var(--bg-alt); position: relative; }
+/* object-position: center top keeps the TOP of each photo (heads) and crops the
+   bottom instead of trimming equally — rescues most "heads cut off" group shots. */
+.gallery .shot img { width: 100%; height: 200px; object-fit: cover; object-position: center top; display: block; }
+.gallery .shot figcaption { font-size: .9rem; color: var(--muted); padding: 10px 14px; text-align: left; }
+/* Filename overlay — only rendered when "?ids" is on the URL (admin/pruning aid) */
+.gallery .shot .fileid { position: absolute; top: 8px; left: 8px; max-width: calc(100% - 16px);
+  background: rgba(0,0,0,.74); color: #fff; font-size: .72rem; font-weight: 600;
+  line-height: 1.25; padding: 3px 7px; border-radius: 6px; word-break: break-all; }
+
+/* Volunteer Teams — community recognition cards (from the Volunteers tab) */
+.vteams { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;
+  margin: 36px auto 0; max-width: var(--maxw); justify-content: center; }
+.vteam { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px 22px 18px; text-align: left; }
+.vteam .vname { font-weight: 700; font-size: 1.12rem; color: var(--ink); line-height: 1.25; }
+.vteam .vcoach { color: var(--muted); margin-top: 6px; font-size: .96rem; }
+.vteam .vtags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.vteam .vtag { font-size: .76rem; font-weight: 600; color: var(--link);
+  background: rgba(31,78,135,.10); border-radius: 999px; padding: 4px 11px; }
+.vteam .vtag.vseason { color: var(--muted); background: var(--bg-alt); }
+
+/* Footer */
+.footer { padding: 40px 22px; background: var(--bg-alt); border-top: 1px solid var(--line); text-align: center; font-size: .8rem; color: var(--muted); }
+.footer p { margin: 4px 0; }
+.social { display: flex; gap: 22px; justify-content: center; margin-bottom: 16px; }
+.social a { color: var(--link); font-weight: 500; }
+
+@media (max-width: 640px) {
+  .section { padding: 64px 22px; }
+  .hero { padding: 64px 22px 52px; }
+  /* Stacked header on phones: logo centered on its own row, links wrap below.
+     This prevents a wide banner logo from overflowing and shoving the nav. */
+  .nav { flex-wrap: wrap; padding: 10px 16px; row-gap: 8px; }
+  .brand { flex: 1 1 100%; justify-content: center; }
+  .brand-logo { height: auto; max-height: 46px; max-width: 88%; }
+  .nav-links { flex: 1 1 100%; justify-content: center; gap: 14px 16px; }
+  .nav-links a { font-size: .82rem; }
+}
+
+
+/* ---------- Printable schedule (Print / Save as PDF button) ---------- */
+/* Built by app.js into #schedule-print; hidden on screen, revealed only when
+   printing after the button adds .print-schedule to <body>. Normal Ctrl+P
+   (without the flag) prints the page as usual. */
+.print-root { display: none; }
+
+@media print {
+  body.print-schedule > *:not(.print-root) { display: none !important; }
+  body.print-schedule .print-root { display: block !important; }
+  body.print-schedule { background: #fff; }
+
+  .print-root { color: #000; font-family: var(--font); }
+  .print-root .p-head { display: flex; align-items: center; gap: 14px;
+    border-bottom: 2px solid #1f4e87; padding-bottom: 10px; margin-bottom: 16px; }
+  .print-root .p-logo { height: 48px; width: auto; }
+  .print-root .p-org { font-size: 19px; font-weight: 700; color: #1f4e87; line-height: 1.15; }
+  .print-root .p-title { font-size: 13px; color: #333; margin-top: 2px; }
+  .print-root .p-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .print-root .p-table th { text-align: left; font-size: 10px; text-transform: uppercase;
+    letter-spacing: .05em; color: #555; border-bottom: 1.5px solid #999; padding: 7px 8px; }
+  .print-root .p-table td { padding: 7px 8px; border-bottom: 1px solid #ddd; vertical-align: top; }
+  .print-root .p-table .p-date { white-space: nowrap; font-weight: 600; }
+  .print-root .p-table .p-ev { font-weight: 500; }
+  .print-root .p-table .p-time { white-space: nowrap; color: #333; }
+  .print-root .p-table .p-loc { color: #444; }
+  .print-root .p-table tr { page-break-inside: avoid; }
+  .print-root .p-table thead { display: table-header-group; }  /* repeat header each page */
+  .print-root .p-foot { margin-top: 16px; font-size: 10px; color: #777; }
+  @page { margin: 0.6in; }
+}

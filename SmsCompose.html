@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 16px; color: #1f2937; font-size: 13px; }
+    h2 { margin: 0 0 2px; font-size: 16px; color: #175C3A; }
+    .sub { color: #6b7280; margin-bottom: 10px; font-size: 12px; }
+    label { font-weight: bold; display: block; margin: 12px 0 4px; }
+    input[type=text], textarea {
+      width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #cbd5e1;
+      border-radius: 6px; font-size: 13px; font-family: inherit;
+    }
+    textarea { resize: vertical; min-height: 92px; }
+    .counter { text-align: right; font-variant-numeric: tabular-nums; margin-top: 4px; color: #6b7280; font-size: 12px; }
+    .counter.warn { color: #b45309; }
+    .counter.max { color: #b91c1c; font-weight: bold; }
+    .aud { background: #eaf3ee; border: 1px solid #cfe6d8; border-radius: 6px; padding: 8px 10px; margin-top: 8px; font-size: 12px; }
+    .aud.warnbox { background: #fef3c7; border-color: #fcd34d; }
+    .aud.errbox { background: #fee2e2; border-color: #fca5a5; }
+    .spin { color: #6b7280; }
+    .preview { background: #f3f4f6; border-radius: 6px; padding: 8px 10px; margin-top: 6px; white-space: pre-wrap; font-size: 13px; }
+    .btns { margin-top: 16px; display: flex; gap: 8px; justify-content: flex-end; }
+    button { padding: 8px 14px; border-radius: 6px; border: 1px solid transparent; font-size: 13px; cursor: pointer; }
+    .primary { background: #175C3A; color: #fff; }
+    .primary:disabled { background: #9ca3af; cursor: not-allowed; }
+    .ghost { background: #fff; border-color: #cbd5e1; color: #374151; }
+    .danger { background: #b91c1c; color: #fff; }
+    .danger:disabled { background: #9ca3af; cursor: not-allowed; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h2>Send Text Blast</h2>
+  <div class="sub">One-way SMS to opted-in guardians &middot; limit <?= charLimit ?> characters (one text).</div>
+
+  <!-- COMPOSE -->
+  <div id="compose">
+    <label>Team filter (optional)</label>
+    <input type="text" id="team" placeholder="Leave blank to text ALL guardians">
+    <div id="aud" class="aud spin">Checking audience&hellip;</div>
+
+    <label>Message</label>
+    <textarea id="msg" maxlength="<?= charLimit ?>" placeholder="Type your announcement&hellip;"></textarea>
+    <div class="counter" id="counter">0 / <?= charLimit ?> &middot; 1 text</div>
+
+    <div class="btns">
+      <button class="ghost" onclick="google.script.host.close()">Cancel</button>
+      <button class="primary" id="review" disabled onclick="showConfirm()">Review &amp; Send</button>
+    </div>
+  </div>
+
+  <!-- CONFIRM -->
+  <div id="confirm" class="hidden">
+    <div class="aud" id="confirmAud"></div>
+    <label>Message preview</label>
+    <div class="preview" id="preview"></div>
+    <div class="btns">
+      <button class="ghost" id="backBtn" onclick="backToEdit()">Back</button>
+      <button class="danger" id="sendNow" onclick="doSend()">Send now</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result" class="hidden"></div>
+
+  <script>
+    var LIMIT = <?= charLimit ?>;
+    var audience = null;
+
+    function segCount(n) { if (n <= 160) return 1; return Math.ceil(n / 153); }
+
+    function updateCounter() {
+      var n = document.getElementById('msg').value.length;
+      var c = document.getElementById('counter');
+      var seg = segCount(n);
+      c.textContent = n + ' / ' + LIMIT + ' · ' + seg + (seg === 1 ? ' text' : ' texts');
+      c.className = 'counter' + (n >= LIMIT ? ' max' : (n >= LIMIT - 20 ? ' warn' : ''));
+      refreshReviewBtn();
+    }
+
+    function refreshReviewBtn() {
+      var n = document.getElementById('msg').value.trim().length;
+      var ok = audience && audience.ok && audience.count > 0 && n > 0;
+      document.getElementById('review').disabled = !ok;
+    }
+
+    function loadAudience() {
+      var team = document.getElementById('team').value;
+      var el = document.getElementById('aud');
+      el.className = 'aud spin'; el.textContent = 'Checking audience…';
+      document.getElementById('review').disabled = true;
+      google.script.run
+        .withSuccessHandler(function (a) {
+          audience = a;
+          if (!a.ok) { el.className = 'aud errbox'; el.textContent = 'Error: ' + a.error; return; }
+          if (a.requireOptIn && !a.optInFound) {
+            el.className = 'aud warnbox';
+            el.textContent = 'Opt-in column not found in ' + a.tab + '. Import the latest export first — sending is blocked as a safety default.';
+            return;
+          }
+          if (a.count === 0) {
+            el.className = 'aud warnbox';
+            el.textContent = 'No opted-in guardians' + (team ? ' on team "' + team + '"' : '') + ' in ' + a.tab + '.';
+            return;
+          }
+          el.className = 'aud';
+          el.innerHTML = '<b>' + a.count + '</b> opted-in guardian(s) in ' + a.tab
+            + (a.excludedNotOptedIn ? ' · ' + a.excludedNotOptedIn + ' not opted in' : '')
+            + (a.optOutCount ? ' · ' + a.optOutCount + ' opted out' : '');
+          refreshReviewBtn();
+        })
+        .withFailureHandler(function (e) {
+          el.className = 'aud errbox'; el.textContent = 'Error: ' + e.message;
+        })
+        .smsComposeAudience(team);
+    }
+
+    function showConfirm() {
+      var msg = document.getElementById('msg').value;
+      document.getElementById('compose').classList.add('hidden');
+      document.getElementById('confirm').classList.remove('hidden');
+      document.getElementById('confirmAud').innerHTML = 'Text <b>' + audience.count + '</b> guardian(s) in ' + audience.tab + '?';
+      document.getElementById('preview').textContent = msg;
+    }
+
+    function backToEdit() {
+      document.getElementById('confirm').classList.add('hidden');
+      document.getElementById('compose').classList.remove('hidden');
+    }
+
+    function doSend() {
+      var team = document.getElementById('team').value;
+      var msg = document.getElementById('msg').value;
+      document.getElementById('sendNow').disabled = true;
+      document.getElementById('backBtn').disabled = true;
+      document.getElementById('confirmAud').innerHTML = '<span class="spin">Sending… keep this box open until it finishes.</span>';
+      google.script.run
+        .withSuccessHandler(showResult)
+        .withFailureHandler(function (e) { showResult({ ok: false, error: e.message }); })
+        .smsComposeSend(team, msg);
+    }
+
+    function showResult(r) {
+      document.getElementById('confirm').classList.add('hidden');
+      var el = document.getElementById('result');
+      el.classList.remove('hidden');
+      if (!r.ok) {
+        el.innerHTML = '<div class="aud errbox">' + r.error + '</div>'
+          + '<div class="btns"><button class="ghost" onclick="google.script.host.close()">Close</button></div>';
+        return;
+      }
+      el.innerHTML = '<div class="aud">Sent <b>' + r.sent + '</b>, failed ' + r.failed + '.'
+        + (r.firstErr ? '<br>First error: ' + r.firstErr : '')
+        + '<br>See the SMS_Log tab for the full log.</div>'
+        + '<div class="btns"><button class="primary" onclick="google.script.host.close()">Done</button></div>';
+    }
+
+    document.getElementById('msg').addEventListener('input', updateCounter);
+    document.getElementById('team').addEventListener('change', loadAudience);
+    window.addEventListener('load', function () { updateCounter(); loadAudience(); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<!-- File: PlayerSearch.html · TOP Soccer — Player Search UI · Version: 2.20 -->
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        margin: 0; padding: 20px 24px; color: #1a1a1a;
+      }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      p.sub { color: #666; margin: 0 0 20px; font-size: 14px; }
+      input#q {
+        width: 100%; box-sizing: border-box; padding: 12px 14px; font-size: 16px;
+        border: 1px solid #ccc; border-radius: 8px; margin-bottom: 12px;
+      }
+      input[type=checkbox] { width: 18px; height: 18px; cursor: pointer; margin: 0; }
+      .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+      .status { color: #666; font-size: 14px; min-height: 18px; }
+      button.pdf {
+        padding: 9px 16px; font-size: 14px; border: 0; border-radius: 8px;
+        background: #1a73e8; color: #fff; cursor: pointer; white-space: nowrap;
+      }
+      button.pdf:disabled { background: #9bbef0; cursor: default; }
+
+      table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+      thead th {
+        text-align: left; font-size: 11px; text-transform: uppercase;
+        letter-spacing: .03em; color: #888; font-weight: 600;
+        padding: 7px 8px; border-bottom: 2px solid #e3e3e3; position: sticky; top: 0;
+        background: #fff;
+      }
+      tbody td { padding: 8px 8px; border-bottom: 1px solid #eee; vertical-align: top; word-wrap: break-word; }
+      tbody tr:hover { background: #f7f9fc; }
+      td.player { font-weight: 600; }
+      td.player small { display: block; font-weight: 400; color: #999; font-size: 11px; }
+      td.center { text-align: center; }
+      td.contact .ph { display: block; white-space: nowrap; }
+      td.contact .em { display: block; font-size: 12px; word-break: break-all; margin-top: 2px; }
+      td.dob .ag { display: block; font-size: 11px; color: #888; }
+      /* fixed column widths so everything fits one view (sums ~100%) */
+      col.c-player { width: 13%; }  col.c-guardian { width: 8%; }
+      col.c-contact { width: 13%; } col.c-sex { width: 3%; }
+      col.c-dob { width: 7%; }      col.c-team { width: 12%; }
+      col.c-shirt { width: 5%; }    col.c-paid { width: 5%; }
+      col.c-pickup { width: 7%; }   col.c-note { width: 9%; }
+      col.c-chs { width: 5%; }      col.c-fall { width: 5%; }
+      .muted { color: #bbb; }
+      a { color: #1a73e8; text-decoration: none; }
+      mark { background: #fff2a8; padding: 0 1px; }
+      .scroll { overflow-x: auto; }
+      .pill {
+        display: inline-block; font-size: 12px; font-weight: 600;
+        padding: 2px 8px; border-radius: 999px;
+      }
+      .pill.yes { background: #e6f4ea; color: #137333; }
+      .pill.no  { background: #fce8e6; color: #c5221f; }
+      td.pickup { text-align: center; }
+      th.pickup-col, td.pickup { padding-right: 16px; }
+      td.pickup .ts { display: block; font-size: 11px; color: #137333; margin-top: 3px; line-height: 1.3; }
+      td.pickup .ts .d, td.pickup .ts .t { display: block; white-space: nowrap; }
+      input.note {
+        width: 100%; box-sizing: border-box; font-size: 13px; padding: 6px 8px;
+        border: 1px solid #ccc; border-radius: 6px;
+      }
+      td.note .ns { display: block; font-size: 11px; margin-top: 2px; min-height: 13px; }
+      #reportbar { margin-bottom: 12px; padding: 10px 12px; background: #f1f5fb; border: 1px solid #d9e2ef; border-radius: 8px; font-size: 14px; }
+      #reportbar select { font-size: 13px; padding: 5px 6px; border: 1px solid #ccc; border-radius: 6px; }
+      button.rbtn { font-size: 13px; padding: 6px 10px; border: 0; border-radius: 6px; background: #1a73e8; color: #fff; cursor: pointer; margin: 3px 2px; }
+      button.rbtn:disabled { background: #b9c9e8; cursor: default; }
+      select.team {
+        width: 100%; box-sizing: border-box; font-size: 13px; padding: 5px 6px;
+        border: 1px solid #ccc; border-radius: 6px; background: #fff;
+      }
+      select.team.unset { color: #999; }
+      td.team .ms { display: block; font-size: 11px; margin-top: 2px; min-height: 13px; }
+      td.team .gs { display: block; font-size: 11px; margin-top: 2px; color: #555; }
+      /* DOB toggle */
+      button.dob-toggle {
+        padding: 7px 12px; font-size: 13px; border: 1px solid #ccc; border-radius: 8px;
+        background: #f8f8f8; color: #444; cursor: pointer; white-space: nowrap;
+      }
+      button.dob-toggle:hover { background: #eee; }
+    </style>
+  </head>
+  <body>
+    <div id="boot" style="color:#666;font-size:15px;">Loading…</div>
+
+    <div id="gate" style="display:none;max-width:320px;margin:60px auto;text-align:center;">
+      <h1 style="margin:0 0 6px;">TOP Soccer</h1>
+      <p class="sub" style="margin:0 0 16px;">Enter the access code to continue.</p>
+      <input id="gcode" type="password" placeholder="access code"
+             style="width:100%;box-sizing:border-box;padding:12px 14px;font-size:16px;border:1px solid #ccc;border-radius:8px;"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();gateUnlock();}">
+      <div style="margin-top:12px;">
+        <button class="pdf" onclick="gateUnlock()" style="padding:11px 20px;">Enter</button>
+        <span id="gmsg" style="margin-left:10px;color:#666;font-size:14px;"></span>
+      </div>
+    </div>
+
+    <div id="app" style="display:none;">
+    <h1>TOP Soccer — Player Search</h1>
+    <p class="sub">Type to filter by player or guardian name, phone, email, gender, program, or team. Set a player's team with the dropdown.</p>
+    <div id="yearbar" style="display:none;margin:0 0 14px;">
+      <label style="font-size:15px;font-family:Arial,sans-serif;">Season:&nbsp;
+        <select id="yearsel" onchange="yearChanged()" style="font-size:15px;padding:4px 8px;border:1px solid #ccc;border-radius:4px;"></select>
+      </label>
+    </div>
+
+    <input id="q" type="text" placeholder="Start typing… (e.g. heyne, 937, @gmail, 2011, sweepers)" disabled
+           oninput="render()">
+    <div class="toolbar">
+      <div class="status" id="status">Loading roster…</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="dob-toggle" id="dobBtn" onclick="toggleDob()">👁 Show DOB</button>
+        <button class="pdf" id="csvBtn" onclick="downloadCsv()" disabled style="display:none;">Export CSV</button>
+        <button class="pdf" id="pdfBtn" onclick="downloadPdf()" disabled>Export PDF</button>
+      </div>
+    </div>
+    <div id="reportbar">
+      <div style="margin-bottom:10px;">
+        <b>Reports</b> &nbsp;
+        <label>Stock: <select id="rstock"></select></label> &nbsp;
+        <label>Sort: <select id="rsort"><option value="team">By team</option><option value="last">By last name</option></select></label> &nbsp;
+        <label><input type="checkbox" id="rnst"> new sheet/team</label> &nbsp;
+        <label>Team: <select id="rteam"></select></label>
+      </div>
+      <div>
+        <button class="rbtn" onclick="genReport('nametags')">Name Tags</button>
+        <button class="rbtn" onclick="genReport('coachtags')">Coach Tags</button>
+        <button class="rbtn" onclick="genReport('address')">Address Labels</button>
+        <button class="rbtn" onclick="genReport('uniformtags')">Uniform Labels</button>
+        <button class="rbtn" onclick="genReport('uniforms')">Uniform List</button>
+        <button class="rbtn" onclick="genReport('teamrosters')">Team Rosters</button>
+        <button class="rbtn" onclick="genReport('coachroster')">Coach Roster</button>
+        <span id="rmsg" style="margin-left:8px;color:#666;"></span>
+      </div>
+    </div>
+    <div id="results"></div>
+    </div><!-- /#app -->
+
+    <script>
+      var ROSTER = [];
+      var TEAMS = [];
+      var TEAM_LOCKED = false, UNLOCKED = false, COACH_CODE = '', YEAR = '';
+
+      // Decide: open (no passcode) → straight in; locked → show the gate, no data yet.
+      google.script.run
+        .withSuccessHandler(function (locked) {
+          document.getElementById('boot').style.display = 'none';
+          TEAM_LOCKED = !!locked;
+          if (!locked) { COACH_CODE = ''; UNLOCKED = true; revealApp(); }
+          else { document.getElementById('gate').style.display = ''; document.getElementById('gcode').focus(); }
+        })
+        .withFailureHandler(function () {
+          document.getElementById('boot').style.display = 'none';
+          document.getElementById('gate').style.display = '';
+        })
+        .isTeamLocked();
+
+      // Random id unique to this browser — scopes the login lockout per person.
+      function clientId() {
+        try {
+          var id = localStorage.getItem('tsClientId');
+          if (!id) { id = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); localStorage.setItem('tsClientId', id); }
+          return id;
+        } catch (e) { return 'c' + Math.random().toString(36).slice(2, 12); }
+      }
+
+      function gateUnlock() {
+        var code = document.getElementById('gcode').value;
+        var msg = document.getElementById('gmsg');
+        msg.textContent = 'checking…'; msg.style.color = '#666';
+        google.script.run
+          .withSuccessHandler(function (res) {
+            if (res && res.ok) {
+              COACH_CODE = code; UNLOCKED = true;
+              document.getElementById('gate').style.display = 'none'; revealApp();
+            } else if (res && res.locked) {
+              msg.textContent = 'Too many tries — wait a few minutes, then try again.'; msg.style.color = '#c5221f';
+            } else {
+              msg.textContent = 'Wrong access code' + (res && res.remaining != null ? ' (' + res.remaining + ' tries left)' : '');
+              msg.style.color = '#c5221f';
+            }
+          })
+          .withFailureHandler(function () { msg.textContent = 'error'; msg.style.color = '#c5221f'; })
+          .attemptLogin(code, clientId());
+      }
+
+      function revealApp() {
+        document.getElementById('app').style.display = '';
+        google.script.run.withSuccessHandler(fillStocks).withFailureHandler(function () {}).getLabelStocks();
+        // Show CSV button if enabled in config.
+        google.script.run
+          .withSuccessHandler(function (enabled) {
+            if (enabled) document.getElementById('csvBtn').style.display = '';
+          })
+          .withFailureHandler(function () {})
+          .getCsvEnabled(COACH_CODE);
+        // Wait for both getAvailableYears + getTeams before loading roster.
+        var pending = 2;
+        function maybeLoad() { if (--pending === 0) loadRoster(); }
+        google.script.run
+          .withSuccessHandler(function (years) { fillYears(years); maybeLoad(); })
+          .withFailureHandler(function () { fillYears([]); maybeLoad(); })
+          .getAvailableYears();
+        google.script.run
+          .withSuccessHandler(function (teams) { TEAMS = teams || []; fillTeamFilter(); maybeLoad(); })
+          .withFailureHandler(function () { TEAMS = []; fillTeamFilter(); maybeLoad(); })
+          .getTeams(COACH_CODE);
+      }
+
+      function fillYears(years) {
+        years = years || [];
+        var bar = document.getElementById('yearbar');
+        var sel = document.getElementById('yearsel');
+        if (!years.length) { YEAR = ''; bar.style.display = 'none'; return; }
+        sel.innerHTML = years.map(function (y) {
+          return '<option value="' + y + '">' + y + ' Season</option>';
+        }).join('');
+        YEAR = years[0];  // newest first
+        bar.style.display = '';
+      }
+
+      function yearChanged() {
+        YEAR = document.getElementById('yearsel').value;
+        ROSTER = [];
+        document.getElementById('results').innerHTML = '';
+        document.getElementById('q').value = '';
+        document.getElementById('q').disabled = true;
+        document.getElementById('pdfBtn').disabled = true;
+        setStatus('Loading roster…');
+        loadRoster();
+      }
+
+      function fillTeamFilter() {
+        var sel = document.getElementById('rteam');
+        if (!sel) return;
+        sel.innerHTML = '<option value="all">All teams</option>' +
+          TEAMS.map(function (t) { return '<option value="' + esc(t) + '">' + esc(t) + '</option>'; }).join('');
+      }
+
+      function fillStocks(stocks) {
+        stocks = stocks || [];
+        var sel = document.getElementById('rstock');
+        sel.innerHTML = stocks.map(function (s) { return '<option value="' + esc(s) + '">' + esc(s) + '</option>'; }).join('');
+        for (var i = 0; i < stocks.length; i++) if (/5395/.test(stocks[i])) { sel.value = stocks[i]; break; }
+        setReportsEnabled();
+      }
+
+      function setReportsEnabled() {
+        var disabled = TEAM_LOCKED && !UNLOCKED;
+        var btns = document.querySelectorAll('#reportbar .rbtn');
+        for (var i = 0; i < btns.length; i++) btns[i].disabled = disabled;
+        ['rstock', 'rsort', 'rnst', 'rteam'].forEach(function (id) { var el = document.getElementById(id); if (el) el.disabled = disabled; });
+        var msg = document.getElementById('rmsg');
+        if (msg && disabled) { msg.textContent = 'unlock above to enable'; msg.style.color = '#999'; }
+        else if (msg && msg.textContent === 'unlock above to enable') { msg.textContent = ''; }
+      }
+
+      function genReport(key) {
+        var stock = document.getElementById('rstock').value;
+        var sort = document.getElementById('rsort').value;
+        var nst = document.getElementById('rnst').checked;
+        var team = document.getElementById('rteam').value;
+        var msg = document.getElementById('rmsg');
+        msg.textContent = 'Generating…'; msg.style.color = '#666';
+        google.script.run
+          .withSuccessHandler(function (res) { msg.textContent = ''; deliverPdf_(res.b64, res.name); })
+          .withFailureHandler(function (e) { msg.textContent = 'Error: ' + (e && e.message ? e.message : e); msg.style.color = '#c5221f'; })
+          .genReportPdf(key, stock, COACH_CODE, sort, nst, team, YEAR);
+      }
+
+      function deliverPdf_(b64, name) {
+        var bin = atob(b64); var arr = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+        var url = URL.createObjectURL(new Blob([arr], { type: 'application/pdf' }));
+        var win = window.open(url, '_blank');
+        if (!win) { var a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+        setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+      }
+
+      function loadRoster() {
+        google.script.run
+          .withSuccessHandler(function (rows) {
+            ROSTER = rows || [];
+            document.getElementById('q').disabled = false;
+            document.getElementById('pdfBtn').disabled = false;
+            var cb = document.getElementById('csvBtn'); if (cb.style.display !== 'none') cb.disabled = false;
+            document.getElementById('q').focus();
+            render();
+          })
+          .withFailureHandler(function (err) { setStatus('Error: ' + (err && err.message ? err.message : err)); })
+          .getRoster(COACH_CODE, YEAR);
+      }
+
+      function teamOptions(current) {
+        current = (current == null ? '' : String(current));
+        var opts = '<option value="">—</option>';
+        for (var i = 0; i < TEAMS.length; i++) {
+          var t = TEAMS[i];
+          opts += '<option value="' + esc(t) + '"' + (t === current ? ' selected' : '') + '>' + esc(t) + '</option>';
+        }
+        // keep a non-config value (rare) visible/selected
+        if (current && TEAMS.indexOf(current) === -1)
+          opts += '<option value="' + esc(current) + '" selected>' + esc(current) + '</option>';
+        return opts;
+      }
+
+      function render() {
+        var q = document.getElementById('q').value.trim().toLowerCase();
+        var rows = !q ? ROSTER : ROSTER.filter(function (r) {
+          return [r.player, r.guardian, r.phone, r.email, r.gender, r.program,
+                  r.dob, r.age, r.team, r.tshirt, r.paid, r.note, r.regId]
+            .join(' ').toLowerCase().indexOf(q) !== -1;
+        });
+
+        setStatus(rows.length + (q ? ' match' + (rows.length === 1 ? '' : 'es') : ' players') + '.');
+        if (!rows.length) { document.getElementById('results').innerHTML = ''; return; }
+
+        var body = rows.map(function (r) {
+          var id = esc(r.regId);
+          var contact =
+            (r.phone ? '<span class="ph">' + hl(r.phone, q) + '</span>' : '') +
+            (r.email ? '<span class="em"><a href="mailto:' + esc(r.email.split(',')[0].trim()) + '">' +
+                        hl(r.email, q) + '</a></span>' : '');
+          return '<tr>' +
+            '<td class="player">' + hl(r.player, q) +
+              (r.program ? '<small>' + hl(r.program, q) + '</small>' : '') +
+              '<small>#' + hl(String(r.regId), q) + '</small>' + '</td>' +
+            '<td>' + cell(hl(r.guardian, q)) + '</td>' +
+            '<td class="contact">' + cell(contact) + '</td>' +
+            '<td class="center">' + cell(esc(r.gender).toUpperCase()) + '</td>' +
+            '<td class="dob">' + cell(esc(r.dob)) +
+              (r.age ? '<span class="ag">age ' + esc(r.age) + '</span>' : '') + '</td>' +
+            '<td class="team">' +
+              '<select class="team' + (r.team ? '' : ' unset') + '" data-id="' + id + '"' +
+                (TEAM_LOCKED && !UNLOCKED ? ' disabled' : '') + ' onchange="changeTeam(this)">' +
+                teamOptions(r.team) + '</select>' +
+              '<span class="ms" id="tm-' + keyOf(r.regId) + '"></span>' +
+              (gsHtml(r.gotsportTeam, r.gotsportPref) ? '<span class="gs">' + gsHtml(r.gotsportTeam, r.gotsportPref) + '</span>' : '') +
+            '</td>' +
+            '<td class="center">' + cell(hl(r.tshirt, q)) + '</td>' +
+            '<td class="center">' + paidPill(r.paid) + '</td>' +
+            '<td class="pickup">' +
+              '<input type="checkbox" data-id="' + id + '" ' +
+                (r.pickedUp ? 'checked' : '') + ' onchange="toggleShirt(this)">' +
+              '<span class="ts" id="ts-' + keyOf(r.regId) + '">' + stampHtml(r.pickedUp) + '</span>' +
+            '</td>' +
+            '<td class="pickup">' +
+              '<input type="checkbox" data-id="' + id + '" ' +
+                (r.chsGame ? 'checked' : '') + ' onchange="toggleEvent(this,\'chs_game\')">' +
+              '<span class="ts" id="chs-' + keyOf(r.regId) + '">' + stampHtml(r.chsGame) + '</span>' +
+            '</td>' +
+            '<td class="pickup">' +
+              '<input type="checkbox" data-id="' + id + '" ' +
+                (r.fallClassic ? 'checked' : '') + ' onchange="toggleEvent(this,\'fall_classic\')">' +
+              '<span class="ts" id="fall-' + keyOf(r.regId) + '">' + stampHtml(r.fallClassic) + '</span>' +
+            '</td>' +
+            '<td class="note">' +
+              '<input class="note" type="text" maxlength="60" placeholder="Add a note…" ' +
+                'value="' + esc(r.note) + '" data-id="' + id + '" ' +
+                'onchange="saveNote(this)" onblur="saveNote(this)" ' +
+                'onkeydown="if(event.key===\'Enter\'){event.preventDefault();saveNote(this);}">' +
+              '<span class="ns" id="ns-' + keyOf(r.regId) + '"></span>' +
+            '</td>' +
+          '</tr>';
+        }).join('');
+
+        document.getElementById('results').innerHTML =
+          '<div class="scroll"><table>' +
+            '<colgroup>' +
+              '<col class="c-player"><col class="c-guardian"><col class="c-contact">' +
+              '<col class="c-sex"><col class="c-dob"><col class="c-team"><col class="c-shirt">' +
+              '<col class="c-paid"><col class="c-pickup"><col class="c-chs"><col class="c-fall"><col class="c-note">' +
+            '</colgroup>' +
+            '<thead><tr>' +
+              '<th>Player / Program</th><th>Guardian</th><th>Contact</th>' +
+              '<th>Sex</th><th class="dob-col">DOB</th><th>Team</th><th>Shirt</th><th>Paid</th>' +
+              '<th class="pickup-col">Shirt picked up</th><th class="pickup-col">CHS game</th><th class="pickup-col">Fall Classic</th><th>Reg note</th>' +
+            '</tr></thead><tbody>' + body + '</tbody></table></div>';
+      }
+
+      function keyOf(id) { return ('id-' + id).replace(/[^A-Za-z0-9_-]/g, '_'); }
+
+      function findRec(id) {
+        for (var i = 0; i < ROSTER.length; i++) if (String(ROSTER[i].regId) === String(id)) return ROSTER[i];
+        return null;
+      }
+
+      function changeTeam(sel) {
+        var id = sel.getAttribute('data-id');
+        var team = sel.value;
+        var span = document.getElementById('tm-' + keyOf(id));
+        var rec = findRec(id);
+        var prev = rec ? rec.team : '';
+        sel.disabled = true;
+        if (span) { span.textContent = 'saving…'; span.style.color = '#999'; }
+        sel.className = 'team' + (team ? '' : ' unset');
+
+        var done = false;
+        var watchdog = setTimeout(function () {
+          if (done) return; done = true;
+          sel.disabled = false; sel.value = prev;
+          sel.className = 'team' + (prev ? '' : ' unset');
+          if (span) { span.textContent = 'no response — redeploy?'; span.style.color = '#c5221f'; }
+        }, 12000);
+
+        google.script.run
+          .withSuccessHandler(function (saved) {
+            if (done) return; done = true; clearTimeout(watchdog);
+            sel.disabled = false;
+            if (rec) rec.team = saved;
+            if (span) {
+              span.textContent = 'saved ✓'; span.style.color = '#137333';
+              setTimeout(function () { if (span.textContent === 'saved ✓') span.textContent = ''; }, 2000);
+            }
+          })
+          .withFailureHandler(function (err) {
+            if (done) return; done = true; clearTimeout(watchdog);
+            sel.disabled = false; sel.value = prev;
+            sel.className = 'team' + (prev ? '' : ' unset');
+            if (span) { span.textContent = 'error: ' + (err && err.message ? err.message : err); span.style.color = '#c5221f'; }
+          })
+          .setTeam(id, team, COACH_CODE, YEAR);
+      }
+
+      function toggleShirt(box) {
+        var id = box.getAttribute('data-id');
+        var checked = box.checked;
+        var span = document.getElementById('ts-' + keyOf(id));
+        box.disabled = true;
+        if (span) { span.textContent = 'saving…'; span.style.color = '#999'; }
+
+        var done = false;
+        var watchdog = setTimeout(function () {
+          if (done) return; done = true;
+          box.disabled = false; box.checked = !checked;
+          if (span) { span.textContent = 'no response — redeploy?'; span.style.color = '#c5221f'; }
+        }, 12000);
+
+        google.script.run
+          .withSuccessHandler(function (ts) {
+            if (done) return; done = true; clearTimeout(watchdog);
+            box.disabled = false;
+            var rec = findRec(id); if (rec) rec.pickedUp = ts;
+            if (span) { span.innerHTML = stampHtml(ts); span.style.color = '#137333'; }
+          })
+          .withFailureHandler(function (err) {
+            if (done) return; done = true; clearTimeout(watchdog);
+            box.disabled = false; box.checked = !checked;
+            if (span) { span.textContent = 'error: ' + (err && err.message ? err.message : err); span.style.color = '#c5221f'; }
+          })
+          .markShirt(id, checked, COACH_CODE, YEAR);
+      }
+
+      function toggleEvent(box, field) {
+        var id = box.getAttribute('data-id');
+        var checked = box.checked;
+        var prefix = field === 'chs_game' ? 'chs' : 'fall';
+        var span = document.getElementById(prefix + '-' + keyOf(id));
+        box.disabled = true;
+        if (span) { span.textContent = 'saving…'; span.style.color = '#999'; }
+
+        var done = false;
+        var watchdog = setTimeout(function () {
+          if (done) return; done = true;
+          box.disabled = false; box.checked = !checked;
+          if (span) { span.textContent = 'no response — redeploy?'; span.style.color = '#c5221f'; }
+        }, 12000);
+
+        google.script.run
+          .withSuccessHandler(function (ts) {
+            if (done) return; done = true; clearTimeout(watchdog);
+            box.disabled = false;
+            var rec = findRec(id);
+            if (rec) { if (field === 'chs_game') rec.chsGame = ts; else rec.fallClassic = ts; }
+            if (span) { span.innerHTML = stampHtml(ts); span.style.color = '#137333'; }
+          })
+          .withFailureHandler(function (err) {
+            if (done) return; done = true; clearTimeout(watchdog);
+            box.disabled = false; box.checked = !checked;
+            if (span) { span.textContent = 'error: ' + (err && err.message ? err.message : err); span.style.color = '#c5221f'; }
+          })
+          .markEvent(id, field, checked, COACH_CODE, YEAR);
+      }
+
+      function downloadPdf() {
+        var q = document.getElementById('q').value.trim();
+        var sortEl = document.getElementById('rsort');
+        var sort = sortEl ? sortEl.value : 'team';
+        var btn = document.getElementById('pdfBtn');
+        var label = btn.textContent;
+        btn.disabled = true; btn.textContent = 'Generating…';
+
+        google.script.run
+          .withSuccessHandler(function (res) {
+            btn.disabled = false; btn.textContent = label;
+            var bin = atob(res.b64);
+            var arr = new Uint8Array(bin.length);
+            for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+            var url = URL.createObjectURL(new Blob([arr], { type: 'application/pdf' }));
+            var win = window.open(url, '_blank');
+            if (!win) {
+              var a = document.createElement('a');
+              a.href = url; a.download = res.name;
+              document.body.appendChild(a); a.click(); a.remove();
+            }
+            setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+          })
+          .withFailureHandler(function (err) {
+            btn.disabled = false; btn.textContent = label;
+            alert('PDF failed: ' + (err && err.message ? err.message : err));
+          })
+          .exportPdf(q, COACH_CODE, YEAR, sort);
+      }
+
+      function downloadCsv() {
+        var q = document.getElementById('q').value.trim();
+        var btn = document.getElementById('csvBtn');
+        var label = btn.textContent;
+        btn.disabled = true; btn.textContent = 'Generating…';
+        google.script.run
+          .withSuccessHandler(function (res) {
+            btn.disabled = false; btn.textContent = label;
+            var blob = new Blob([res.csv], { type: 'text/csv' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url; a.download = res.name;
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+          })
+          .withFailureHandler(function (err) {
+            btn.disabled = false; btn.textContent = label;
+            alert('CSV failed: ' + (err && err.message ? err.message : err));
+          })
+          .exportCsv(q, COACH_CODE, YEAR);
+      }
+
+      function saveNote(input) {
+        var id = input.getAttribute('data-id');
+        var text = input.value;
+        var span = document.getElementById('ns-' + keyOf(id));
+        var rec = findRec(id);
+        if (rec && rec.note === text) return;
+        if (input.getAttribute('data-pending') === text) return;
+        input.setAttribute('data-pending', text);
+
+        input.disabled = true;
+        if (span) { span.textContent = 'saving…'; span.style.color = '#999'; }
+
+        var done = false;
+        var watchdog = setTimeout(function () {
+          if (done) return; done = true;
+          input.disabled = false;
+          if (span) { span.textContent = 'no response — redeploy?'; span.style.color = '#c5221f'; }
+        }, 12000);
+
+        google.script.run
+          .withSuccessHandler(function (saved) {
+            if (done) return; done = true; clearTimeout(watchdog);
+            input.disabled = false; input.value = saved;
+            if (rec) rec.note = saved;
+            if (span) {
+              span.textContent = 'saved ✓'; span.style.color = '#137333';
+              setTimeout(function () { if (span.textContent === 'saved ✓') span.textContent = ''; }, 2000);
+            }
+          })
+          .withFailureHandler(function (err) {
+            if (done) return; done = true; clearTimeout(watchdog);
+            input.disabled = false;
+            if (span) { span.textContent = 'error: ' + (err && err.message ? err.message : err); span.style.color = '#c5221f'; }
+          })
+          .saveNote(id, text, COACH_CODE, YEAR);
+      }
+
+      var DOB_SHOWN = false;
+      (function() {
+        var s = document.createElement('style');
+        s.id = 'dob-hide-style';
+        s.textContent = 'td.dob,th.dob-col{display:none}';
+        document.head.appendChild(s);
+      })();
+      function toggleDob() {
+        DOB_SHOWN = !DOB_SHOWN;
+        var styleId = 'dob-hide-style';
+        var existing = document.getElementById(styleId);
+        if (!DOB_SHOWN) {
+          if (!existing) {
+            var s = document.createElement('style');
+            s.id = styleId;
+            s.textContent = 'td.dob,th.dob-col{display:none}';
+            document.head.appendChild(s);
+          }
+        } else {
+          if (existing) existing.parentNode.removeChild(existing);
+        }
+        document.getElementById('dobBtn').textContent = DOB_SHOWN ? '🔒 Hide DOB' : '👁 Show DOB';
+      }
+
+      // GoSport team hint: Team Name (regular) if set, else preference (italic).
+      function gsHtml(team, pref) {
+        if (team) return esc(team);
+        if (pref) return '<em>' + esc(pref) + '</em>';
+        return '';
+      }
+
+      function stampHtml(s) {
+        s = (s == null ? '' : String(s)).trim();
+        if (!s) return '';
+        var i = s.indexOf(' ');
+        if (i === -1) return esc(s);
+        return '<span class="d">' + esc(s.slice(0, i)) + '</span>' +
+               '<span class="t">' + esc(s.slice(i + 1)) + '</span>';
+      }
+
+      function setStatus(t) { document.getElementById('status').textContent = t; }
+      function dash() { return '<span class="muted">—</span>'; }
+      function paidPill(v) {
+        v = (v == null ? '' : String(v)).trim();
+        if (!v) return dash();
+        var low = v.toLowerCase();
+        if (/yes|paid|complete|true/.test(low) && !/unpaid|not /.test(low))
+          return '<span class="pill yes">' + esc(v) + '</span>';
+        if (/no|unpaid|pending|due|false/.test(low))
+          return '<span class="pill no">' + esc(v) + '</span>';
+        return esc(v);
+      }
+      function cell(html) { return html ? html : dash(); }
+      function esc(s) {
+        return (s == null ? '' : String(s))
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+      function hl(s, q) {
+        var e = esc(s);
+        if (!q || !s) return e;
+        s = String(s);
+        var i = s.toLowerCase().indexOf(q);
+        if (i === -1) return e;
+        return esc(s.substr(0, i)) + '<mark>' + esc(s.substr(i, q.length)) +
+               '</mark>' + esc(s.substr(i + q.length));
+      }
+    </script>
+  </body>
+</html>
