@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<!-- South Dayton TOPSoccer — SMS opt-in / consent page · Version: 1.0
+     Standalone public page (deploys to the repo ROOT → served at /sms-optin).
+     Purpose: A2P 10DLC carrier review evidence. Shows the EXACT SMS consent
+     language and a rendering of the opt-in checkbox that appears on the
+     GoSports registration form, plus links to /sms-privacy and /sms-terms.
+     Publicly loadable with no login so a Twilio/TCR reviewer can verify consent.
+     Self-contained: inline CSS, brand palette copied from styles.css v3.21. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <title>Text Message Alerts — South Dayton TOPSoccer</title>
+  <meta name="description" content="How to sign up for South Dayton TOPSoccer text alerts, and the consent terms for our SMS program.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#ffffff; --bg-alt:#f5f5f7; --ink:#1d1d1f; --muted:#6e6e73;
+      --blue:#1f4e87; --link:#1f4e87; --line:#d2d2d7; --radius:18px; --maxw:760px;
+      --font:"Inter",-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);
+      line-height:1.55;font-size:17px;-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+      overflow-wrap:break-word;word-break:break-word;}
+    img,svg{max-width:100%}
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+    h1{font-weight:600;font-size:clamp(2rem,5vw,2.8rem);line-height:1.08;letter-spacing:-.02em;margin:0 0 .3em}
+    h2{font-weight:600;font-size:1.4rem;letter-spacing:-.01em;margin:2.2rem 0 .6rem}
+    p{margin:0 0 1rem}
+    .muted{color:var(--muted)}
+    /* Nav — slim frosted bar to match the main site */
+    .nav{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
+      padding:10px 22px;min-height:56px;background:rgba(255,255,255,.92);
+      backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.08);}
+    .brand{display:flex;align-items:center;gap:8px;font-weight:600;font-size:1.05rem;color:var(--ink)}
+    .brand img{height:30px;width:auto;display:block}
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:40px 22px 72px}
+    .eyebrow{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--blue);margin:0 0 8px}
+    .lead{font-size:1.2rem;color:var(--muted);margin:0 0 1.4rem}
+    /* Consent form preview card — this is the exact opt-in as it appears on registration */
+    .form-preview{border:1px solid var(--line);border-radius:var(--radius);
+      background:var(--bg-alt);padding:22px 24px;margin:1rem 0 1.6rem}
+    .form-preview .fp-label{display:flex;gap:12px;align-items:flex-start}
+    .form-preview input[type=checkbox]{width:20px;height:20px;margin-top:3px;flex:0 0 auto;accent-color:var(--blue)}
+    .form-preview .fp-text{font-size:.98rem}
+    .form-preview .fp-consent{font-weight:600;display:block;margin-bottom:6px}
+    .form-preview .fp-fine{color:var(--muted);font-size:.9rem;line-height:1.5}
+    .tag{display:inline-block;font-size:.72rem;font-weight:600;text-transform:uppercase;
+      letter-spacing:.05em;color:var(--blue);background:#eaf0f9;border-radius:980px;padding:4px 11px;margin-bottom:10px}
+    ul{margin:0 0 1rem;padding-left:1.2em}
+    li{margin:.3rem 0}
+    .btn{display:inline-block;background:var(--blue);color:#fff;padding:11px 22px;border-radius:980px;font-weight:500}
+    .btn:hover{background:#2a5fa0;text-decoration:none}
+    .callout{border-left:3px solid var(--blue);background:var(--bg-alt);
+      border-radius:0 12px 12px 0;padding:14px 18px;margin:1.2rem 0;font-size:.96rem}
+    .screenshot{border:1px solid var(--line);border-radius:12px;display:block;margin:1rem 0}
+    .footer{border-top:1px solid var(--line);max-width:var(--maxw);margin:0 auto;
+      padding:26px 22px 48px;text-align:center;color:var(--muted);font-size:.9rem}
+    .footer a{color:var(--muted)}
+    .footer .legal{margin-top:8px}
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <a class="brand" href="/">
+      <img src="mark.svg" alt="" />
+      <span>South Dayton TOPSoccer</span>
+    </a>
+  </header>
+
+  <main class="wrap">
+    <p class="eyebrow">Stay in the loop</p>
+    <h1>Text message alerts</h1>
+    <p class="lead">South Dayton TOPSoccer sends occasional text messages to parents and
+      guardians so you never miss a schedule change, a weather cancellation, or an event detail
+      like picture day. Signing up is optional and takes one checkbox.</p>
+
+    <h2>How to sign up</h2>
+    <p>When you register your athlete on our online registration form, check the
+      <strong>text alerts</strong> box and enter your mobile number. That's it — you're on the list.
+      Consent is completely optional and is <strong>not</strong> required to register or participate.</p>
+
+    <p><a class="btn" href="https://system.gotsport.com/programs/6P1428487?reg_role=player" target="_blank" rel="noopener">Go to registration</a></p>
+
+    <h2>The opt-in, exactly as it appears</h2>
+    <p class="muted">This is the consent checkbox shown on our registration form:</p>
+
+    <!-- Rendered replica of the GoSports opt-in checkbox. Publicly visible so a
+         carrier reviewer can read the exact consent language without a login. -->
+    <div class="form-preview" role="group" aria-label="SMS consent (sample)">
+      <span class="tag">Registration form · Text alerts</span>
+      <label class="fp-label">
+        <input type="checkbox" disabled aria-hidden="true">
+        <span class="fp-text">
+          <span class="fp-consent">Yes, send me text alerts from South Dayton TOPSoccer.</span>
+          <span class="fp-fine">By checking this box, I agree to receive occasional SMS text messages
+          (schedule changes, cancellations, and event details) from South Dayton TOPSoccer at the
+          mobile number I provided. Message frequency varies — typically fewer than 10 messages per year.
+          Message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe or
+          <strong>HELP</strong> for help. Your mobile number will never be shared with third parties.
+          See our <a href="/sms-privacy">SMS Privacy Policy</a> and <a href="/sms-terms">SMS Terms</a>.</span>
+        </span>
+      </label>
+    </div>
+
+    <!-- OPTIONAL: drop a real screenshot of the GoSports form here for extra proof.
+         Save it in the repo root as gotsport-sms-optin.png, then delete the "hidden" attribute.
+    <img class="screenshot" src="gotsport-sms-optin.png"
+         alt="Screenshot of the text-alerts consent checkbox on the South Dayton TOPSoccer registration form" hidden>
+    -->
+
+    <h2>What to expect</h2>
+    <ul>
+      <li><strong>Who texts you:</strong> South Dayton TOPSoccer (a 501(c)(3) non-profit youth soccer program).</li>
+      <li><strong>What we send:</strong> one-way program announcements only — schedule changes, weather
+        cancellations, and event logistics. No marketing, no selling of anything.</li>
+      <li><strong>How often:</strong> occasional — typically fewer than 10 messages per year.</li>
+      <li><strong>Cost:</strong> message and data rates may apply, per your mobile carrier.</li>
+      <li><strong>Opt out anytime:</strong> reply <strong>STOP</strong> to any message to unsubscribe.
+        Reply <strong>HELP</strong> for help.</li>
+      <li><strong>Your privacy:</strong> we never sell, rent, or share your mobile number or opt-in
+        information with third parties.</li>
+    </ul>
+
+    <div class="callout">
+      Questions about our text program? Email
+      <a href="mailto:admin@southdaytontopsoccer.com">admin@southdaytontopsoccer.com</a>.
+      Full details are in our <a href="/sms-privacy">SMS Privacy Policy</a> and
+      <a href="/sms-terms">SMS Terms of Service</a>.
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>South Dayton TOPSoccer is a 501(c)(3) non-profit organization.</p>
+    <p class="muted">&copy; <span id="year"></span> South Dayton TOPSoccer. All rights reserved.</p>
+    <p class="legal"><a href="/sms-privacy">SMS Privacy</a> &middot; <a href="/sms-terms">SMS Terms</a> &middot; <a href="/">Home</a></p>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
