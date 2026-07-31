@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<!-- South Dayton TOPSoccer — SMS opt-in / consent page · Version: 2.0
+<!-- South Dayton TOPSoccer — SMS opt-in / consent page · Version: 2.1
+     v2.1: added a scannable QR code under the "Text JOIN now" button — encodes
+     SMSTO:+19373539712:JOIN so a phone camera opens a pre-filled "JOIN" text.
+     QR is inline SVG (self-contained, no external dependency). Footer link to this
+     page added site-wide in index.html v3.19 (footer "Text Alerts").
      v2.0: primary opt-in is now TEXT "JOIN" to the org's 937 number (year-round,
      works when registration is closed). Keyword call-to-action + full consent
      disclosures posted publicly for A2P 10DLC carrier review. GoSports checkbox
@@ -56,6 +60,11 @@
     .btn{display:inline-block;background:var(--blue);color:#fff;padding:12px 26px;border-radius:980px;font-weight:600;font-size:1.05rem}
     .btn:hover{background:#2a5fa0;text-decoration:none}
     .btn-sub{font-size:.9rem;color:var(--muted);margin-top:10px}
+    /* QR — encodes SMSTO:+19373539712:JOIN so a scan opens a pre-filled "JOIN" text */
+    .qr{margin-top:20px;display:flex;flex-direction:column;align-items:center;gap:8px}
+    .qr-frame{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;line-height:0}
+    .qr-frame svg{width:172px;height:172px;display:block}
+    .qr-cap{font-size:.85rem;color:var(--muted);margin:0;max-width:34ch}
     /* Consent disclosure — the exact language a carrier reviewer must see */
     .consent{border-left:3px solid var(--blue);background:var(--bg-alt);border-radius:0 12px 12px 0;
       padding:16px 18px;margin:1rem 0 1.4rem;font-size:.94rem;line-height:1.55;color:#333}
@@ -92,6 +101,10 @@
       <span class="cta-num"><a href="sms:+19373539712?&body=JOIN">(937) 353-9712</a></span>
       <a class="btn" href="sms:+19373539712?&body=JOIN">Text JOIN now</a>
       <p class="btn-sub">You'll get a confirmation text right back.</p>
+      <div class="qr">
+        <div class="qr-frame"><svg xmlns="http://www.w3.org/2000/svg" width="290" height="290" class="segno" role="img" aria-label="QR code to text JOIN to (937) 353-9712"><path transform="scale(10)" class="qrline" stroke="#1f4e87" d="M2 2.5h7m1 0h5m1 0h3m1 0h7m-25 1h1m5 0h1m1 0h1m3 0h3m3 0h1m5 0h1m-25 1h1m1 0h3m1 0h1m3 0h1m1 0h2m1 0h1m2 0h1m1 0h3m1 0h1m-25 1h1m1 0h3m1 0h1m3 0h1m1 0h1m3 0h1m1 0h1m1 0h3m1 0h1m-25 1h1m1 0h3m1 0h1m2 0h1m1 0h1m3 0h1m2 0h1m1 0h3m1 0h1m-25 1h1m5 0h1m2 0h3m4 0h1m1 0h1m5 0h1m-25 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-16 1h3m2 0h3m-16 1h1m4 0h5m4 0h3m5 0h2m-24 1h5m1 0h2m1 0h2m1 0h1m2 0h3m3 0h3m-22 1h1m2 0h1m1 0h3m1 0h3m3 0h3m1 0h1m1 0h1m-25 1h2m1 0h3m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m-17 1h3m1 0h4m1 0h3m1 0h1m3 0h2m1 0h2m-24 1h1m1 0h1m1 0h2m2 0h1m1 0h1m1 0h2m4 0h3m1 0h1m-23 1h1m3 0h1m1 0h2m2 0h2m2 0h4m1 0h2m3 0h1m-25 1h1m1 0h4m1 0h1m4 0h2m1 0h1m3 0h2m1 0h1m1 0h1m-25 1h1m2 0h1m2 0h3m2 0h1m4 0h5m1 0h1m1 0h1m-17 1h1m3 0h1m1 0h3m3 0h1m1 0h3m-25 1h7m1 0h4m1 0h4m1 0h1m1 0h3m-23 1h1m5 0h1m3 0h1m1 0h1m1 0h1m1 0h1m3 0h2m1 0h1m-24 1h1m1 0h3m1 0h1m3 0h1m1 0h3m1 0h6m-22 1h1m1 0h3m1 0h1m2 0h2m2 0h1m1 0h1m2 0h1m5 0h1m-25 1h1m1 0h3m1 0h1m3 0h1m2 0h2m1 0h1m1 0h1m5 0h1m-25 1h1m5 0h1m1 0h3m2 0h1m1 0h2m1 0h1m3 0h1m-23 1h7m2 0h1m1 0h3m3 0h1m1 0h1m2 0h3"/></svg></div>
+        <p class="qr-cap">On a computer? Scan with your phone's camera to open a pre-filled text.</p>
+      </div>
     </div>
 
     <div class="consent">
