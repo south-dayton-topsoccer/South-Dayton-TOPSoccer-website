@@ -1,0 +1,13 @@
+BEGIN:VCARD
+VERSION:3.0
+N:South Dayton TOPSoccer;;;;
+FN:South Dayton TOPSoccer
+ORG:South Dayton TOPSoccer
+item1.TEL;type=CELL:+19373539712
+item1.X-ABLabel:TEXT
+item2.TEL;type=VOICE:+19378151548
+item2.X-ABLabel:Hotline
+EMAIL;TYPE=INTERNET:info@southdaytontopsoccer.com
+URL:https://southdaytontopsoccer.com
+NOTE:Text alerts line. Reply STOP to opt out.
+END:VCARD
